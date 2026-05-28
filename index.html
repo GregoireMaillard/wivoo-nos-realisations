@@ -4,24 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nos Réalisations — Wivoo</title>
+  <meta name="description" content="Découvrez comment Wivoo aide ses clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design." />
+  <meta property="og:title" content="Nos Réalisations — Wivoo" />
+  <meta property="og:description" content="8 études de cas Product, AI, Data et Design. Découvrez comment Wivoo transforme les entreprises." />
+  <meta property="og:image" content="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be9a1714406fbdfff024d_iStock-941051278.jpg" />
+  <meta property="og:type" content="website" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .card-description {
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
-    .card-overlay {
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .case-card:hover .card-overlay {
-      opacity: 1;
-    }
-    .case-card:hover .card-description {
-      opacity: 1;
-      transform: translateY(0);
-    }
+    .card-description { opacity: 0; transform: translateY(8px); transition: opacity 0.3s ease, transform 0.3s ease; }
+    .card-overlay { opacity: 0; transition: opacity 0.3s ease; }
+    .case-card:hover .card-overlay { opacity: 1; }
+    .case-card:hover .card-description { opacity: 1; transform: translateY(0); }
+    @keyframes cardIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .card-anim { animation: cardIn 0.4s ease forwards; opacity: 0; }
   </style>
 </head>
 <body class="bg-white text-gray-900 font-sans">
@@ -29,10 +24,7 @@
   <!-- Navbar -->
   <nav class="w-full border-b border-gray-100 bg-white sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-      <!-- Logo -->
-      <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/6867e403657af2e53b357217_LOGO-Wivoo-RGB_BLUE.svg"
-           alt="Wivoo" class="h-16" />
-      <!-- Menu -->
+      <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/6867e403657af2e53b357217_LOGO-Wivoo-RGB_BLUE.svg" alt="Wivoo" class="h-16" />
       <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
         <li class="cursor-default select-none">Nos solutions +</li>
         <li class="cursor-default select-none font-semibold text-gray-900 underline underline-offset-4 decoration-2">Nos réalisations +</li>
@@ -40,11 +32,7 @@
         <li class="cursor-default select-none">A propos de nous +</li>
         <li class="cursor-default select-none">Carrière +</li>
       </ul>
-      <!-- CTA -->
-      <a href="https://www.wivoo.fr/contact" target="_blank"
-         class="bg-[#5BDF6A] text-gray-900 font-bold text-sm px-6 py-3 rounded-full hover:opacity-90 transition-opacity">
-        Prendre RDV
-      </a>
+      <a href="https://www.wivoo.fr/contact" target="_blank" class="bg-[#5BDF6A] text-gray-900 font-bold text-sm px-6 py-3 rounded-full hover:opacity-90 transition-opacity">Prendre RDV</a>
     </div>
   </nav>
 
@@ -52,240 +40,112 @@
   <header class="max-w-5xl mx-auto px-6 pt-16 pb-10 text-center">
     <p class="text-sm font-semibold tracking-widest text-gray-400 uppercase mb-3">Portfolio</p>
     <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Réalisations</h1>
-    <p class="text-lg text-gray-500 max-w-xl mx-auto">
-      Découvrez comment nous aidons nos clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design.
-    </p>
+    <p class="text-lg text-gray-500 max-w-xl mx-auto">Découvrez comment nous aidons nos clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design.</p>
   </header>
 
   <!-- FilterBar -->
-  <div class="max-w-5xl mx-auto px-6 mb-10">
+  <div class="max-w-5xl mx-auto px-6 mb-3">
     <div class="flex flex-wrap gap-2 justify-center" id="filters">
-      <button onclick="filter('all')" data-filter="all"
-        class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
-        style="background-color:#111827; color:#fff; border-color:#111827;">
-        Tous
-      </button>
-      <button onclick="filter('Product')" data-filter="Product"
-        class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
-        style="background-color:#fff; color:#6d28d9; border-color:#6d28d9;">
-        Product
-      </button>
-      <button onclick="filter('AI')" data-filter="AI"
-        class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
-        style="background-color:#fff; color:#0891b2; border-color:#0891b2;">
-        AI
-      </button>
-      <button onclick="filter('Data')" data-filter="Data"
-        class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
-        style="background-color:#fff; color:#059669; border-color:#059669;">
-        Data
-      </button>
-      <button onclick="filter('Design')" data-filter="Design"
-        class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
-        style="background-color:#fff; color:#db2777; border-color:#db2777;">
-        Design
-      </button>
+      <button onclick="filter('all')" data-filter="all" class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200" style="background-color:#111827;color:#fff;border-color:#111827;">Tous</button>
+      <button onclick="filter('Product')" data-filter="Product" class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200" style="background-color:#fff;color:#6d28d9;border-color:#6d28d9;">Product</button>
+      <button onclick="filter('AI')" data-filter="AI" class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200" style="background-color:#fff;color:#0891b2;border-color:#0891b2;">AI</button>
+      <button onclick="filter('Data')" data-filter="Data" class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200" style="background-color:#fff;color:#059669;border-color:#059669;">Data</button>
+      <button onclick="filter('Design')" data-filter="Design" class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200" style="background-color:#fff;color:#db2777;border-color:#db2777;">Design</button>
     </div>
+    <p class="text-center text-sm text-gray-400 mt-3" id="result-count">8 réalisations</p>
   </div>
 
   <!-- Grid -->
   <main class="max-w-5xl mx-auto px-6 pb-20">
-    <div id="grid" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+    <div id="grid"></div>
   </main>
 
   <!-- Footer -->
   <footer class="text-white" style="background-color: #160b52;">
     <div class="max-w-6xl mx-auto px-6 pt-10 pb-8">
-
-      <!-- Bannière "Restez connectés" -->
       <div class="flex items-center justify-between px-8 py-5 rounded-2xl mb-16" style="background-color: #3a26b0;">
         <div>
           <p class="font-bold text-white text-base">Restez connectés !</p>
           <p class="text-white/70 text-sm mt-0.5">Suivez nos actus et contenus exclusifs sur nos pages Linkedin et Welcome To The Jungle</p>
         </div>
         <div class="flex items-center gap-3">
-          <a href="https://www.linkedin.com/company/wivoo" target="_blank"
-             class="w-10 h-10 rounded-full border border-white/40 flex items-center justify-center hover:border-white transition-colors">
-            <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/686b8ab18b27cc7f082f638f_f391d0437d3ab9b5c9ed263ade102128_LinkedIn%20Big%20Logo.svg"
-                 alt="LinkedIn" class="h-5 w-5" />
+          <a href="https://www.linkedin.com/company/wivoo" target="_blank" class="w-10 h-10 rounded-full border border-white/40 flex items-center justify-center hover:border-white transition-colors">
+            <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/686b8ab18b27cc7f082f638f_f391d0437d3ab9b5c9ed263ade102128_LinkedIn%20Big%20Logo.svg" alt="LinkedIn" class="h-5 w-5" />
           </a>
-          <a href="https://www.welcometothejungle.com/fr/companies/wivoo/jobs" target="_blank"
-             class="w-10 h-10 rounded-full border border-white/40 flex items-center justify-center hover:border-white transition-colors">
-            <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/686b8ab11602c22034ea503e_2e0cb108efb9c38c96721b2bada0469e_Welcome%20to%20the%20Jungle%20Logo%20Icon.svg"
-                 alt="Welcome to the Jungle" class="h-5 w-5" />
+          <a href="https://www.welcometothejungle.com/fr/companies/wivoo/jobs" target="_blank" class="w-10 h-10 rounded-full border border-white/40 flex items-center justify-center hover:border-white transition-colors">
+            <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/686b8ab11602c22034ea503e_2e0cb108efb9c38c96721b2bada0469e_Welcome%20to%20the%20Jungle%20Logo%20Icon.svg" alt="Welcome to the Jungle" class="h-5 w-5" />
           </a>
         </div>
       </div>
-
-      <!-- Centre : logo + CTA + tagline -->
       <div class="flex flex-col items-center text-center gap-6 mb-12">
-        <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/68761c360a7be01af5693330_Wivoo%20Logo%20RGB%20White.svg"
-             alt="Wivoo" class="h-12" />
-        <a href="https://www.wivoo.fr/contact" target="_blank"
-           class="inline-block bg-[#5BDF6A] text-gray-900 font-bold text-sm px-8 py-3 rounded-full hover:opacity-90 transition-opacity">
-          Prendre RDV
-        </a>
-        <p class="text-white text-base max-w-xl">
-          Un collectif expert en Produit, Data et IA au service de la transformation de votre entreprise
-        </p>
+        <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/68761c360a7be01af5693330_Wivoo%20Logo%20RGB%20White.svg" alt="Wivoo" class="h-12" />
+        <a href="https://www.wivoo.fr/contact" target="_blank" class="inline-block bg-[#5BDF6A] text-gray-900 font-bold text-sm px-8 py-3 rounded-full hover:opacity-90 transition-opacity">Prendre RDV</a>
+        <p class="text-white text-base max-w-xl">Un collectif expert en Produit, Data et IA au service de la transformation de votre entreprise</p>
       </div>
-
-      <!-- Bas de footer -->
-      <div class="text-center text-white/40 text-sm">
-        @Wivoo - 2026 &nbsp;
-        <a href="https://www.wivoo.fr/mentions-legales" target="_blank"
-           class="hover:text-white/70 transition-colors">Mentions légales</a>
-      </div>
-
+      <div class="text-center text-white/40 text-sm">@Wivoo - 2026 &nbsp;<a href="https://www.wivoo.fr/mentions-legales" target="_blank" class="hover:text-white/70 transition-colors">Mentions légales</a></div>
     </div>
   </footer>
 
   <script>
     const cases = [
-      {
-        id: 1,
-        sector: "Data",
-        client: "",
-        title: "Optimisation des scores prédictifs et segmentation client pour une personnalisation accrue de l'expérience utilisateur",
-        description: "Réduction du taux d'abandon de 40% grâce à une refonte complète du parcours d'activation utilisateur.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be9a1714406fbdfff024d_iStock-941051278.jpg",
-        url: "case-studies/optimisation-scores-predictifs.html"
-      },
-      {
-        id: 2,
-        sector: "Product",
-        client: "",
-        title: "Optimisation du service client digital pour un acteur majeur du matériel de BTP",
-        description: "Mise en place d'un design system unifié et d'une roadmap structurée pour accélérer les cycles de delivery.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b11e934caeaefb31716d6_iStock-1202957913%20(1).jpg",
-        url: "case-studies/service-client-btp.html"
-      },
-      {
-        id: 3,
-        sector: "Product",
-        client: "",
-        title: "Création et déploiement de sites e-commerce pour un leader mondial du secteur pharmaceutique",
-        description: "Déploiement d'un assistant conversationnel réduisant de 60% le temps de traitement des demandes RH.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b102b4537dfe7a7498ab2_iStock-1778307374.jpg",
-        url: "case-studies/ecommerce-pharma.html"
-      },
-      {
-        id: 4,
-        sector: "AI",
-        client: "",
-        title: "Refonte du chatbot client avec intégration de technologies GenAI pour un acteur majeur du secteur bancaire",
-        description: "Augmentation du panier moyen de 25% grâce à un moteur de recommandation entraîné sur les données comportementales.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b0d5845187f94044319a6_iStock-1182622625%20(1).jpg",
-        url: "case-studies/chatbot-genai-banque.html"
-      },
-      {
-        id: 5,
-        sector: "Design",
-        client: "",
-        title: "Renforcement de l'engagement utilisateur pour un leader du retail sportif européen",
-        description: "Construction d'une plateforme data centralisée permettant une prise de décision basée sur des données fiables et traçables.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be2641d60740223500383_iStock-1285296688.jpg",
-        url: "case-studies/engagement-retail-sportif.html"
-      },
-      {
-        id: 6,
-        sector: "Design",
-        client: "",
-        title: "Transformation de l'expérience client en magasin pour un leader mondial de la beauté et des cosmétiques",
-        description: "Tableau de bord unifiant 12 sources de données pour piloter les performances en temps réel à l'échelle nationale.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b0b523caf3a6bee2250bc_iStock-175529423.jpg",
-        url: "case-studies/experience-beaute-cosmetiques.html"
-      },
-      {
-        id: 7,
-        sector: "Data",
-        client: "",
-        title: "Optimisation des abonnements numériques pour un grand média français",
-        description: "Création d'une identité visuelle forte et d'un design system scalable pour accompagner la croissance de la marque.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be241fc3c8ebd83c2301a_iStock-155598132.jpg",
-        url: "case-studies/abonnements-media-francais.html"
-      },
-      {
-        id: 8,
-        sector: "Data",
-        client: "",
-        title: "Révolution de la gestion des données chez un leader du secteur retail",
-        description: "Série de tests utilisateurs et prototypes haute fidélité ayant conduit à une refonte validée en 6 semaines.",
-        image: "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be0930d1c90e13f2443bc_iStock-1987658400.jpg",
-        url: "case-studies/gestion-donnees-retail.html"
-      }
+      { id:1, sector:"Data",    title:"Optimisation des scores prédictifs et segmentation client pour une personnalisation accrue de l'expérience utilisateur", description:"Refonte des scores RFM, X-Sell et Churn pour personnaliser les communications CRM d'un retailer à grande échelle.", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be9a1714406fbdfff024d_iStock-941051278.jpg", url:"case-studies/optimisation-scores-predictifs.html" },
+      { id:2, sector:"Product", title:"Optimisation du service client digital pour un acteur majeur du matériel de BTP", description:"Tripler l'adoption de l'espace client digital et −50% d'appels entrants grâce à une refonte UX et une organisation agile.", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b11e934caeaefb31716d6_iStock-1202957913%20(1).jpg", url:"case-studies/service-client-btp.html" },
+      { id:3, sector:"Product", title:"Création et déploiement de sites e-commerce pour un leader mondial du secteur pharmaceutique", description:"Déploiement de sites e-commerce localisés dans 10 pays pour 3 grandes marques pharmaceutiques (+200% de visibilité digitale).", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b102b4537dfe7a7498ab2_iStock-1778307374.jpg", url:"case-studies/ecommerce-pharma.html" },
+      { id:4, sector:"AI",      title:"Refonte du chatbot client avec intégration de technologies GenAI pour un acteur majeur du secteur bancaire", description:"400 intentions couvertes et 39 000 variations intégrées pour un chatbot bancaire intelligent et naturel.", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b0d5845187f94044319a6_iStock-1182622625%20(1).jpg", url:"case-studies/chatbot-genai-banque.html" },
+      { id:5, sector:"Design",  title:"Renforcement de l'engagement utilisateur pour un leader du retail sportif européen", description:"+300% de trafic sur les pages immersives et +100K inscriptions grâce à un engagement communautaire repensé.", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be2641d60740223500383_iStock-1285296688.jpg", url:"case-studies/engagement-retail-sportif.html" },
+      { id:6, sector:"Design",  title:"Transformation de l'expérience client en magasin pour un leader mondial de la beauté et des cosmétiques", description:"+70-80% de conversion dans 17 magasins pilotes, prélude au déploiement dans 350 points de vente européens.", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b0b523caf3a6bee2250bc_iStock-175529423.jpg", url:"case-studies/experience-beaute-cosmetiques.html" },
+      { id:7, sector:"Data",    title:"Optimisation des abonnements numériques pour un grand média français", description:"+60-70% d'abonnés numériques annuellement et réduction du churn de 20% à moins de 5% en 18 mois.", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be241fc3c8ebd83c2301a_iStock-155598132.jpg", url:"case-studies/abonnements-media-francais.html" },
+      { id:8, sector:"Data",    title:"Révolution de la gestion des données chez un leader du secteur retail", description:"−40% de temps sur la préparation des données et −7% de coûts d'achat grâce à un datahub structuré.", image:"https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be0930d1c90e13f2443bc_iStock-1987658400.jpg", url:"case-studies/gestion-donnees-retail.html" }
     ];
 
-    const sectorColors = {
-      "Product": "background-color: #6d28d9;",
-      "AI":      "background-color: #0891b2;",
-      "Data":    "background-color: #059669;",
-      "Design":  "background-color: #db2777;"
-    };
+    const sectorColors = { Product:"#6d28d9", AI:"#0891b2", Data:"#059669", Design:"#db2777" };
+    const filterActive   = { all:{bg:"#111827",text:"#fff",border:"#111827"}, Product:{bg:"#6d28d9",text:"#fff",border:"#6d28d9"}, AI:{bg:"#0891b2",text:"#fff",border:"#0891b2"}, Data:{bg:"#059669",text:"#fff",border:"#059669"}, Design:{bg:"#db2777",text:"#fff",border:"#db2777"} };
+    const filterInactive = { all:{bg:"#fff",text:"#111827",border:"#111827"}, Product:{bg:"#fff",text:"#6d28d9",border:"#6d28d9"}, AI:{bg:"#fff",text:"#0891b2",border:"#0891b2"}, Data:{bg:"#fff",text:"#059669",border:"#059669"}, Design:{bg:"#fff",text:"#db2777",border:"#db2777"} };
 
-    function renderCards(filtered) {
+    function renderCards(filtered, sector) {
       const grid = document.getElementById('grid');
+      const showAll = sector === 'all';
+      grid.className = 'grid grid-cols-1 md:grid-cols-2 gap-6';
       grid.innerHTML = '';
-      filtered.forEach(c => {
-        grid.innerHTML += `
-          <a href="${c.url}" target="_blank"
+
+      filtered.forEach((c, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'card-anim';
+        wrap.style.animationDelay = `${i * 55}ms`;
+        wrap.innerHTML = `
+          <a href="${c.url}"
              class="case-card group relative rounded-2xl overflow-hidden block aspect-[4/3]"
-             style="background-image: url('${c.image}'); background-size: cover; background-position: center;"
-             data-sector="${c.sector}">
-            <!-- Dégradé permanent bas de carte pour lisibilité du texte -->
+             style="background-image:url('${c.image}');background-size:cover;background-position:center;" data-sector="${c.sector}">
             <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-            <!-- Hover overlay -->
-            <div class="card-overlay absolute inset-0 bg-black/40"></div>
-            <!-- Badge secteur -->
-            <span class="absolute top-4 left-4 z-10 text-xs font-semibold px-3 py-1 rounded-full text-white"
-                  style="${sectorColors[c.sector]}">
-              ${c.sector}
-            </span>
-            <!-- Contenu bas de carte -->
+            <div class="card-overlay absolute inset-0 bg-black/30"></div>
+            <span class="absolute top-4 left-4 z-10 text-xs font-semibold px-3 py-1 rounded-full text-white" style="background-color:${sectorColors[c.sector]}">${c.sector}</span>
             <div class="absolute bottom-0 left-0 right-0 z-10 p-6">
               <h2 class="text-white font-bold text-lg leading-snug mb-3">${c.title}</h2>
-              <p class="text-white/80 text-sm leading-relaxed mb-4">${c.description}</p>
-              <span class="inline-flex items-center gap-1 text-white text-sm font-medium">
-                Voir le cas <span>→</span>
-              </span>
+              <p class="card-description text-white/80 text-sm leading-relaxed mb-4">${c.description}</p>
+              <span class="card-description inline-flex items-center gap-1 text-white text-sm font-medium">Voir le cas <span>→</span></span>
             </div>
-          </a>
-        `;
+          </a>`;
+        grid.appendChild(wrap);
       });
-    }
 
-    const filterColors = {
-      "all":     { bg: "#111827", text: "#fff",     border: "#111827" },
-      "Product": { bg: "#6d28d9", text: "#fff",     border: "#6d28d9" },
-      "AI":      { bg: "#0891b2", text: "#fff",     border: "#0891b2" },
-      "Data":    { bg: "#059669", text: "#fff",     border: "#059669" },
-      "Design":  { bg: "#db2777", text: "#fff",     border: "#db2777" }
-    };
-    const filterInactive = {
-      "all":     { bg: "#fff", text: "#111827", border: "#111827" },
-      "Product": { bg: "#fff", text: "#6d28d9", border: "#6d28d9" },
-      "AI":      { bg: "#fff", text: "#0891b2", border: "#0891b2" },
-      "Data":    { bg: "#fff", text: "#059669", border: "#059669" },
-      "Design":  { bg: "#fff", text: "#db2777", border: "#db2777" }
-    };
+      const count = filtered.length;
+      document.getElementById('result-count').textContent = sector === 'all'
+        ? `${count} réalisations`
+        : `${count} réalisation${count > 1 ? 's' : ''} · ${sector}`;
+    }
 
     function filter(sector) {
       document.querySelectorAll('.filter-btn').forEach(btn => {
-        const key = btn.dataset.filter;
-        const isActive = key === sector;
-        const c = isActive ? filterColors[key] : filterInactive[key];
+        const k = btn.dataset.filter;
+        const c = k === sector ? filterActive[k] : filterInactive[k];
         btn.style.backgroundColor = c.bg;
         btn.style.color = c.text;
         btn.style.borderColor = c.border;
       });
-
-      const filtered = sector === 'all' ? cases : cases.filter(c => c.sector === sector);
-      renderCards(filtered);
+      renderCards(sector === 'all' ? cases : cases.filter(c => c.sector === sector), sector);
     }
 
-    // Affichage initial
-    renderCards(cases);
+    renderCards(cases, 'all');
   </script>
-
 </body>
 </html>
