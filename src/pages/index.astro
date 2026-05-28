@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { readCases, SECTOR_COLORS } from '../lib/cases';
+
+export const prerender = true;
+
+const cases = readCases().filter(c => c.published !== false);
+---
+
+<BaseLayout title="Nos Réalisations — Wivoo">
+  <style>
+    .card-description {
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .card-overlay {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .case-card:hover .card-overlay { opacity: 1; }
+    .case-card:hover .card-description { opacity: 1; transform: translateY(0); }
+  </style>
+
+  <Navbar />
+
+  <!-- Header -->
+  <header class="max-w-5xl mx-auto px-6 pt-16 pb-10 text-center">
+    <p class="text-sm font-semibold tracking-widest text-gray-400 uppercase mb-3">Portfolio</p>
+    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Réalisations</h1>
+    <p class="text-lg text-gray-500 max-w-xl mx-auto">
+      Découvrez comment nous aidons nos clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design.
+    </p>
+  </header>
+
+  <!-- FilterBar -->
+  <div class="max-w-5xl mx-auto px-6 mb-10">
+    <div class="flex flex-wrap gap-2 justify-center" id="filters">
+      <button onclick="filter('all')" data-filter="all"
+        class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
+        style="background-color:#111827; color:#fff; border-color:#111827;">
+        Tous
+      </button>
+      {(['Product', 'AI', 'Data', 'Design'] as const).map(s => (
+        <button onclick={`filter('${s}')`} data-filter={s}
+          class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
+          style={`background-color:#fff; color:${SECTOR_COLORS[s].hex}; border-color:${SECTOR_COLORS[s].hex};`}>
+          {s}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <main class="max-w-5xl mx-auto px-6 pb-20">
+    <div id="grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {cases.map(c => (
+        <a href={`/case-studies/${c.slug}`}
+           class="case-card group relative rounded-2xl overflow-hidden block aspect-[4/3]"
+           style={`background-image: url('${c.image}'); background-size: cover; background-position: center;`}
+           data-sector={c.sector}>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div class="card-overlay absolute inset-0 bg-black/40"></div>
+          <span class="absolute top-4 left-4 z-10 text-xs font-semibold px-3 py-1 rounded-full text-white"
+                style={`background-color:${SECTOR_COLORS[c.sector].hex};`}>
+            {c.sector}
+          </span>
+          <div class="absolute bottom-0 left-0 right-0 z-10 p-6">
+            <h2 class="text-white font-bold text-lg leading-snug mb-3">{c.title}</h2>
+            <p class="card-description text-white/80 text-sm leading-relaxed mb-4">{c.description}</p>
+            <span class="inline-flex items-center gap-1 text-white text-sm font-medium">
+              Voir le cas <span>→</span>
+            </span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script define:vars={{ cases }}>
+  const sectorColors = {
+    Product: '#6d28d9', AI: '#0891b2', Data: '#059669', Design: '#db2777'
+  };
+  const filterColors = {
+    all:     { bg: '#111827', text: '#fff',    border: '#111827' },
+    Product: { bg: '#6d28d9', text: '#fff',    border: '#6d28d9' },
+    AI:      { bg: '#0891b2', text: '#fff',    border: '#0891b2' },
+    Data:    { bg: '#059669', text: '#fff',    border: '#059669' },
+    Design:  { bg: '#db2777', text: '#fff',    border: '#db2777' },
+  };
+  const filterInactive = {
+    all:     { bg: '#fff', text: '#111827', border: '#111827' },
+    Product: { bg: '#fff', text: '#6d28d9', border: '#6d28d9' },
+    AI:      { bg: '#fff', text: '#0891b2', border: '#0891b2' },
+    Data:    { bg: '#fff', text: '#059669', border: '#059669' },
+    Design:  { bg: '#fff', text: '#db2777', border: '#db2777' },
+  };
+
+  function filter(sector) {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      const key = btn.dataset.filter;
+      const isActive = key === sector;
+      const c = isActive ? filterColors[key] : filterInactive[key];
+      btn.style.backgroundColor = c.bg;
+      btn.style.color = c.text;
+      btn.style.borderColor = c.border;
+    });
+    document.querySelectorAll('.case-card').forEach(card => {
+      card.style.display = (sector === 'all' || card.dataset.sector === sector) ? 'block' : 'none';
+    });
+  }
+</script>

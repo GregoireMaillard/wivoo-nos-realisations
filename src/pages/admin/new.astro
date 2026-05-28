@@ -1,0 +1,151 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { readCases, writeCases } from '../../lib/cases';
+import type { Case } from '../../lib/cases';
+
+let error = '';
+
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const cases = readCases();
+
+  const slug = (form.get('slug') as string).trim();
+  if (cases.find(c => c.slug === slug)) {
+    error = `Le slug "${slug}" existe déjà.`;
+  } else {
+    const newCase: Case = {
+      id:          Math.max(0, ...cases.map(c => c.id)) + 1,
+      slug,
+      sector:      form.get('sector') as Case['sector'],
+      client:      (form.get('client') as string).trim(),
+      title:       (form.get('title') as string).trim(),
+      subtitle:    (form.get('subtitle') as string).trim(),
+      description: (form.get('description') as string).trim(),
+      image:       (form.get('image') as string).trim(),
+      published:   form.get('published') === 'on',
+      kpis: [0, 1, 2].map(i => ({
+        value: (form.get(`kpi${i}_value`) as string || '').trim(),
+        label: (form.get(`kpi${i}_label`) as string || '').trim(),
+      })).filter(k => k.value || k.label),
+      challenge: (form.get('challenge') as string).trim(),
+      solution: (form.get('solution') as string).split('\n').map(s => s.trim()).filter(Boolean),
+    };
+    cases.push(newCase);
+    writeCases(cases);
+    return Astro.redirect('/admin');
+  }
+}
+---
+
+<BaseLayout title="Nouvelle réalisation — Back-office Wivoo">
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center gap-4">
+      <a href="/admin" class="text-sm text-gray-500 hover:text-gray-800 transition-colors">← Retour</a>
+      <span class="text-sm font-semibold text-gray-700 border-l border-gray-200 pl-4">Nouvelle réalisation</span>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-8 pb-20">
+    {error && (
+      <div class="mb-6 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>
+    )}
+    <form method="POST" class="space-y-6">
+      <slot name="fields" />
+      <!-- Infos principales -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Infos principales</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Secteur *</label>
+            <select name="sector" required class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="">— Choisir —</option>
+              {['Product','AI','Data','Design'].map(s => <option value={s}>{s}</option>)}
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Client (optionnel)</label>
+            <input name="client" type="text" placeholder="Nom du client" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Titre *</label>
+          <input name="title" type="text" required id="title-input" placeholder="Ex : Refonte du chatbot client…" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Slug URL *</label>
+            <input name="slug" type="text" required id="slug-input" placeholder="ex-mon-cas-client" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <p class="text-xs text-gray-400 mt-1">Généré automatiquement depuis le titre</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-500 mb-1">Sous-titre / Direction</label>
+            <input name="subtitle" type="text" placeholder="Direction Marketing — Pharma / Santé" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Description courte (carte) *</label>
+          <textarea name="description" required rows="2" placeholder="Résumé en 1-2 phrases affiché sur la carte au survol" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">URL de l'image *</label>
+          <input name="image" type="url" required placeholder="https://cdn.example.com/image.jpg" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        </div>
+        <div class="flex items-center gap-3">
+          <input name="published" type="checkbox" checked id="pub" class="w-4 h-4 rounded" />
+          <label for="pub" class="text-sm text-gray-600">Publié (visible sur le site vitrine)</label>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-3">
+        <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">KPIs (3 résultats clés)</h2>
+        {[0,1,2].map(i => (
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-gray-500 mb-1">Valeur {i+1}</label>
+              <input name={`kpi${i}_value`} type="text" placeholder="+20%" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div class="col-span-2">
+              <label class="block text-xs font-medium text-gray-500 mb-1">Label {i+1}</label>
+              <input name={`kpi${i}_label`} type="text" placeholder="d'augmentation de…" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Contenu -->
+      <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+        <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Contenu de la page détail</h2>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Le défi</label>
+          <textarea name="challenge" rows="4" placeholder="Décrivez le contexte et les enjeux du projet…" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Notre solution <span class="text-gray-400 font-normal">(une étape par ligne)</span></label>
+          <textarea name="solution" rows="6" placeholder="Phase de Discovery avec les équipes&#10;Refonte des scores et segmentation&#10;AB tests avec groupes de contrôle" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3 pb-8">
+        <button type="submit" class="bg-[#5BDF6A] text-gray-900 font-semibold text-sm px-6 py-3 rounded-lg hover:opacity-90 transition-opacity">
+          Enregistrer
+        </button>
+        <a href="/admin" class="text-sm px-6 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors">
+          Annuler
+        </a>
+      </div>
+    </form>
+  </main>
+</BaseLayout>
+
+<script>
+  const titleInput = document.getElementById('title-input') as HTMLInputElement;
+  const slugInput  = document.getElementById('slug-input') as HTMLInputElement;
+  titleInput?.addEventListener('input', () => {
+    slugInput.value = titleInput.value.toLowerCase()
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 80);
+  });
+</script>

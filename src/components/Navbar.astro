@@ -1,0 +1,32 @@
+---
+interface Props {
+  backLink?: boolean;
+}
+const { backLink = false } = Astro.props;
+const logoHref = backLink ? '/' : undefined;
+---
+
+<nav class="w-full border-b border-gray-100 bg-white sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    {backLink ? (
+      <a href="/">
+        <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/6867e403657af2e53b357217_LOGO-Wivoo-RGB_BLUE.svg"
+             alt="Wivoo" class="h-16" />
+      </a>
+    ) : (
+      <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/6867e403657af2e53b357217_LOGO-Wivoo-RGB_BLUE.svg"
+           alt="Wivoo" class="h-16" />
+    )}
+    <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
+      <li class="cursor-default select-none">Nos solutions +</li>
+      <li class="cursor-default select-none font-semibold text-gray-900 underline underline-offset-4 decoration-2">Nos réalisations +</li>
+      <li class="cursor-default select-none">Nos contenus +</li>
+      <li class="cursor-default select-none">A propos de nous +</li>
+      <li class="cursor-default select-none">Carrière +</li>
+    </ul>
+    <a href="https://www.wivoo.fr/contact" target="_blank"
+       class="bg-[#5BDF6A] text-gray-900 font-bold text-sm px-6 py-3 rounded-full hover:opacity-90 transition-opacity">
+      Prendre RDV
+    </a>
+  </div>
+</nav>
