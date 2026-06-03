@@ -293,26 +293,5 @@
       "minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in",
       "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     ]
-  },
-  {
-    "id": 10,
-    "slug": "zzz-prodtest-upload-a-supprimer",
-    "sector": "AI",
-    "client": "",
-    "title": "PROD TEST upload (à supprimer)",
-    "subtitle": "Test — Retail",
-    "description": "test prod",
-    "image": "/case-images/zzz-prodtest-upload-a-supprimer-fr6y.png",
-    "published": true,
-    "kpis": [
-      {
-        "value": "+1%",
-        "label": "test"
-      }
-    ],
-    "challenge": "test",
-    "solution": [
-      "test"
-    ]
   }
 ]
