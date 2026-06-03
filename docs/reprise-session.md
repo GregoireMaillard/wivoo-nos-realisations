@@ -6,12 +6,36 @@
 Le projet a migré de HTML statique vers **Astro 6.4.1** + **Tailwind CSS v4** + adaptateur **@astrojs/vercel**.
 Un back-office d'administration a été ajouté.
 
-### Back-office — persistance (ajout 03/06/2026)
-Le back-office persiste désormais en production : `writeCases()` (`src/lib/cases.ts`)
-commit `cases.json` sur GitHub via l'API Contents quand `GITHUB_TOKEN` est présent
-(prod Vercel), sinon `writeFileSync` en local. Le commit déclenche le rebuild Vercel
-(~1 min). Retry sur conflit SHA (`ConcurrentEditError`). **Pas encore d'authentification
-sur `/admin`** — voir `docs/back-office.md` (env vars, token, TODO sécurité).
+### Back-office — persistance + UX (ajout 03/06/2026)
+Le back-office persiste désormais en production. Détails dans `docs/back-office.md`
+(fonctionnement, env vars, token, TODO sécurité).
+
+**Écriture** — `writeCases()` (`src/lib/cases.ts`) :
+- En prod (`GITHUB_TOKEN` présent) → commit `cases.json` via l'API GitHub Contents.
+  Le commit déclenche le rebuild Vercel auto → site statique à jour en ~1 min.
+- En local → `writeFileSync` instantané.
+- Retry sur conflit SHA (`ConcurrentEditError`).
+
+**Lecture admin** — `readCasesLive()` (`src/lib/cases.ts`) : en prod, les écrans admin
+lisent `cases.json` directement depuis GitHub (dernier commit) au lieu du bundle
+déployé, pour refléter le changement **immédiatement** dans l'admin sans attendre le
+rebuild. Fallback sur le bundle en cas d'échec. Les pages publiques (statiques) gardent
+`readCases()` (build-time).
+
+**Feedback UI** (`/admin`) : bandeaux succès (« ✓ Enregistré — visible sur le site dans
+~1 min » en prod) / conflit concurrent / erreur, via params `?saved=1` / `?error=`.
+
+**Cooldown publier/dépublier** : après un toggle, le bouton concerné est désactivé ~1 min
+avec compte à rebours (« ⏳ Maj du site… Xs »), le temps que le rebuild Vercel rende le
+changement effectif. Persisté en `localStorage` (survit au reload du POST), par
+réalisation. **Actif uniquement en prod** (gated sur `data-remote` = `isRemotePersistence()`) ;
+inactif en local où l'écriture est instantanée.
+
+**Variables d'env Vercel** : `GITHUB_TOKEN`, `GITHUB_REPO`
+(`GregoireMaillard/wivoo-nos-realisations`), `GITHUB_BRANCH` (`main`).
+
+⚠️ **Pas encore d'authentification sur `/admin`** (assumé pour la démo) — à sécuriser
+avant toute exposition réelle. Cf. `docs/back-office.md`.
 
 ---
 
@@ -82,8 +106,12 @@ PrototypeChallengeShowcase_V3/
 
 ### Git — état local
 - Branche : `main`
-- 21 commits effectués, tout est commité et pushé
+- Tout est commité et pushé sur `origin/main`
 - Remote GitHub (SSH) : `git@github.com:GregoireMaillard/wivoo-nos-realisations.git`
+- Derniers commits back-office : persistance GitHub + feedback UI → lecture live
+  (`readCasesLive`) → cooldown publier/dépublier → cooldown conditionné à la prod.
+  Note : les commits `chore(admin): mise à jour des réalisations` sont générés
+  automatiquement par le back-office en prod (chaque sauvegarde = 1 commit).
 
 ### Déploiement
 - **Vercel** : https://wivoo-nos-realisations.vercel.app/ — **en ligne et à jour**
