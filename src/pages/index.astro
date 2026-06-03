@@ -7,6 +7,28 @@ import { readCases, SECTOR_COLORS } from '../lib/cases';
 export const prerender = true;
 
 const cases = readCases().filter(c => c.published !== false);
+
+const industries = [...new Set(
+  cases.map(c => c.subtitle.includes('—') ? c.subtitle.split('—')[1].trim() : '').filter(Boolean)
+)].sort();
+
+const sectorCounts: Record<string, number> = {
+  Product: cases.filter(c => c.sector === 'Product').length,
+  AI:      cases.filter(c => c.sector === 'AI').length,
+  Data:    cases.filter(c => c.sector === 'Data').length,
+  Design:  cases.filter(c => c.sector === 'Design').length,
+};
+
+const industryLabels: Record<string, string> = {
+  'Banques & Assurances': 'Banque',
+  'Pharma / Santé': 'Santé',
+};
+
+const industryCounts: Record<string, number> = {};
+cases.forEach(c => {
+  const ind = c.subtitle.includes('—') ? c.subtitle.split('—')[1].trim() : '';
+  if (ind) industryCounts[ind] = (industryCounts[ind] || 0) + 1;
+});
 ---
 
 <BaseLayout title="Nos Réalisations — Wivoo">
@@ -35,11 +57,14 @@ const cases = readCases().filter(c => c.published !== false);
     .toggle-btn.active { background: #fff; color: #111827; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
 
     /* List view */
-    #grid.list-view { display: flex; flex-direction: column; gap: 0;
-      background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    #grid.list-view {
+      display: flex; flex-direction: column; gap: 0;
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
     #grid.list-view .case-card {
       display: grid;
-      grid-template-columns: 140px 1fr auto auto;
+      grid-template-columns: 220px minmax(0,1fr) 180px auto;
       align-items: center;
       gap: 16px;
       padding: 12px 16px;
@@ -47,18 +72,18 @@ const cases = readCases().filter(c => c.published !== false);
       border-radius: 0;
       box-shadow: none;
       transform: none;
-      flex-direction: row;
     }
     #grid.list-view .case-card:last-child { border-bottom: none; }
     #grid.list-view .case-card:hover { background: #fafafa; box-shadow: none; transform: none; }
     #grid.list-view .card-img { aspect-ratio: 16/9 !important; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
     #grid.list-view .card-img img { transform: none !important; }
     #grid.list-view .case-card:hover .card-img img { transform: none !important; }
-    #grid.list-view .p-4 { padding: 0; flex-direction: row; align-items: center; gap: 16px; display: contents; }
-    #grid.list-view .card-title { -webkit-line-clamp: 2; flex: 1; margin-bottom: 0; }
+    #grid.list-view .p-4 { padding: 0; display: contents; }
+    #grid.list-view .card-title { -webkit-line-clamp: 3; flex: unset; margin-bottom: 0; }
     #grid.list-view .border-gray-100 { display: none; }
-    #grid.list-view .text-2xl { font-size: 1.25rem; margin-bottom: 0; min-width: 72px; text-align: center; }
-    #grid.list-view .kpi-label { display: none; }
+    #grid.list-view .kpi-group { display: flex; flex-direction: column; gap: 3px; justify-content: center; }
+    #grid.list-view .text-2xl { font-size: 1.1rem; margin-bottom: 0; min-width: unset; text-align: left; }
+    #grid.list-view .kpi-label { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.7rem; margin: 0; }
     #grid.list-view .card-cta { white-space: nowrap; margin-top: 0; }
   </style>
 
@@ -66,7 +91,7 @@ const cases = readCases().filter(c => c.published !== false);
 
   <!-- Header -->
   <header class="w-full bg-[#f0eeff] pt-16 pb-10">
-    <div class="max-w-5xl mx-auto px-6 text-center">
+    <div class="max-w-7xl mx-auto px-6 text-center">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Réalisations</h1>
       <p class="text-lg text-gray-500 max-w-xl mx-auto">
         Découvrez comment nous aidons nos clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design.
@@ -75,55 +100,81 @@ const cases = readCases().filter(c => c.published !== false);
   </header>
 
   <!-- FilterBar + Toggle -->
-  <div class="w-full bg-[#f0eeff] pb-12">
-    <div class="max-w-5xl mx-auto px-6 flex flex-wrap items-center justify-center gap-3">
-      <!-- Filters -->
-      <div class="flex flex-wrap gap-2 justify-center" id="filters">
-        <button data-filter="all"
-          class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 cursor-pointer"
+  <div class="w-full bg-[#f0eeff] pb-10">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col gap-2.5">
+
+      <!-- Ligne 1 : Expertise -->
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="text-xs font-semibold tracking-widest text-gray-500 uppercase shrink-0" style="width:96px;">Expertise</span>
+        <button id="btn-tous-sector"
+          class="px-4 py-1.5 rounded-full text-sm font-semibold border-2 transition-all duration-200 cursor-pointer"
           style="background-color:#111827; color:#fff; border-color:#111827;">
-          Tous
+          Tous · 4
         </button>
         {(['Product', 'AI', 'Data', 'Design'] as const).map(s => (
           <button data-filter={s}
-            class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 cursor-pointer"
+            class="filter-btn-sector px-4 py-1.5 rounded-full text-sm font-semibold border-2 transition-all duration-200 cursor-pointer"
             style={`background-color:#fff; color:${SECTOR_COLORS[s].hex}; border-color:${SECTOR_COLORS[s].hex};`}>
-            {s}
+            {s} · {sectorCounts[s]}
           </button>
         ))}
       </div>
-      <!-- View toggle -->
-      <div class="flex gap-0.5 bg-gray-200 rounded-lg p-1">
-        <button id="btn-grid" class="toggle-btn active w-8 h-8 rounded-md flex items-center justify-center text-gray-500 cursor-pointer" title="Vue grille">
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
-            <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
-            <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
-          </svg>
+
+      <!-- Ligne 2 : Secteur + résultats + toggle -->
+      <div class="flex items-center gap-2 flex-nowrap">
+        <span class="text-xs font-semibold tracking-widest text-gray-500 uppercase shrink-0" style="width:96px;">Secteur</span>
+        <button id="btn-tous-industry"
+          class="shrink-0 px-4 py-1.5 rounded-full text-sm font-semibold border-2 transition-all duration-200 cursor-pointer"
+          style="background-color:#111827; color:#fff; border-color:#111827;">
+          Tous · {industries.length}
         </button>
-        <button id="btn-list" class="toggle-btn w-8 h-8 rounded-md flex items-center justify-center text-gray-500 cursor-pointer" title="Vue liste">
-          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-            <line x1="5" y1="4" x2="14" y2="4"/><line x1="5" y1="8" x2="14" y2="8"/><line x1="5" y1="12" x2="14" y2="12"/>
-            <circle cx="2" cy="4" r="1" fill="currentColor" stroke="none"/>
-            <circle cx="2" cy="8" r="1" fill="currentColor" stroke="none"/>
-            <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"/>
-          </svg>
-        </button>
+        {industries.map(ind => (
+          <button data-filter={ind}
+            class="filter-btn-industry shrink-0 px-3 py-1.5 rounded-full text-sm font-semibold border transition-all duration-200 cursor-pointer"
+            style="background-color:#fff; color:#6b7280; border-color:#e5e7eb;">
+            {industryLabels[ind] ?? ind} · {industryCounts[ind]}
+          </button>
+        ))}
+
+        <!-- Résultats + toggle (droite) -->
+        <div class="ml-auto flex items-center gap-3 shrink-0">
+          <span id="result-count" class="text-sm font-bold text-gray-800">{cases.length} résultats</span>
+          <div class="flex gap-0.5 bg-gray-200 rounded-lg p-1">
+            <button id="btn-grid" class="toggle-btn active w-7 h-7 rounded-md flex items-center justify-center text-gray-500 cursor-pointer" title="Vue grille">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+                <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
+                <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
+              </svg>
+            </button>
+            <button id="btn-list" class="toggle-btn w-7 h-7 rounded-md flex items-center justify-center text-gray-500 cursor-pointer" title="Vue liste">
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <line x1="5" y1="4" x2="14" y2="4"/><line x1="5" y1="8" x2="14" y2="8"/><line x1="5" y1="12" x2="14" y2="12"/>
+                <circle cx="2" cy="4" r="1" fill="currentColor" stroke="none"/>
+                <circle cx="2" cy="8" r="1" fill="currentColor" stroke="none"/>
+                <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"/>
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
   <!-- Grid -->
   <main class="max-w-7xl mx-auto px-6 pt-10 pb-20">
     <div id="grid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+
       {cases.map(c => {
         const industry = c.subtitle.includes('—') ? c.subtitle.split('—')[1].trim() : '';
         const kpi = c.kpis[0];
         return (
           <a href={`/case-studies/${c.slug}`}
              class="case-card bg-white rounded-2xl overflow-hidden flex flex-col shadow-sm"
-             data-sector={c.sector}>
+             data-sector={c.sector}
+             data-industry={industry}>
             <!-- Image -->
-            <div class="card-img relative overflow-hidden" style="aspect-ratio:16/6; flex-shrink:0;">
+            <div class="card-img relative overflow-hidden" style="aspect-ratio:2/1; flex-shrink:0;">
               <img src={c.image} alt={c.title} class="w-full h-full object-cover block" />
               <div class="absolute bottom-3 left-3 flex gap-1.5 flex-wrap">
                 <span class="text-xs font-bold px-2.5 py-1 rounded-full text-white"
@@ -133,86 +184,151 @@ const cases = readCases().filter(c => c.published !== false);
                 {industry && (
                   <span class="text-xs font-semibold px-2.5 py-1 rounded-full text-gray-700"
                         style="background:rgba(255,255,255,0.92); backdrop-filter:blur(4px);">
-                    {industry}
+                    {industryLabels[industry] ?? industry}
                   </span>
                 )}
               </div>
             </div>
             <!-- Content -->
             <div class="p-4 flex flex-col flex-1">
-              <h2 class="card-title text-sm font-bold text-gray-900 leading-snug flex-1 mb-2">{c.title}</h2>
+              <h2 class="card-title text-base font-bold text-gray-900 leading-snug flex-1 mb-2">{c.title}</h2>
               <hr class="border-gray-100 mb-2" />
-              <p class="text-2xl font-extrabold leading-none mb-1" style={`color:${SECTOR_COLORS[c.sector].hex};`}>
-                {kpi.value}
-              </p>
-              <p class="kpi-label text-xs text-gray-500 leading-relaxed mb-3">{kpi.label}</p>
-              <span class="card-cta inline-flex items-center gap-1 text-xs font-semibold text-gray-500">
+              <div class="kpi-group">
+                <p class="text-2xl font-extrabold leading-none mb-1" style={`color:${SECTOR_COLORS[c.sector].hex};`}>
+                  {kpi.value}
+                </p>
+                <p class="kpi-label text-sm text-gray-500 leading-relaxed mb-3">{kpi.label}</p>
+              </div>
+              <span class="card-cta inline-flex items-center gap-1 text-sm font-semibold" style={`color:${SECTOR_COLORS[c.sector].hex};`}>
                 Voir le cas →
               </span>
             </div>
           </a>
         );
       })}
+
+      <!-- État vide -->
+      <div id="empty-state" style="display:none"
+           class="col-span-3 py-20 flex flex-col items-center text-center">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" class="mb-4">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+        </svg>
+        <p class="text-base font-medium text-gray-400">Aucune réalisation pour cette combinaison de filtres.</p>
+        <button id="btn-reset-filters" class="mt-3 text-sm font-medium text-indigo-600 hover:underline cursor-pointer">
+          Réinitialiser les filtres
+        </button>
+      </div>
+
     </div>
   </main>
 
   <Footer />
 </BaseLayout>
 
-<script define:vars={{ cases }}>
-  const sectorColors = {
-    Product: '#6d28d9', AI: '#0891b2', Data: '#059669', Design: '#db2777'
-  };
-  const filterColors = {
-    all:     { bg: '#111827', text: '#fff',    border: '#111827' },
-    Product: { bg: '#6d28d9', text: '#fff',    border: '#6d28d9' },
-    AI:      { bg: '#0891b2', text: '#fff',    border: '#0891b2' },
-    Data:    { bg: '#059669', text: '#fff',    border: '#059669' },
-    Design:  { bg: '#db2777', text: '#fff',    border: '#db2777' },
-  };
-  const filterInactive = {
-    all:     { bg: '#fff', text: '#111827', border: '#111827' },
-    Product: { bg: '#fff', text: '#6d28d9', border: '#6d28d9' },
-    AI:      { bg: '#fff', text: '#0891b2', border: '#0891b2' },
-    Data:    { bg: '#fff', text: '#059669', border: '#059669' },
-    Design:  { bg: '#fff', text: '#db2777', border: '#db2777' },
+<script>
+  const sectorColors: Record<string, string> = {
+    Product: '#6d28d9', AI: '#0891b2', Data: '#059669', Design: '#db2777',
   };
 
-  function applyFilter(sector) {
-    document.querySelectorAll('.filter-btn').forEach(btn => {
-      const key = btn.dataset.filter;
-      const isActive = key === sector;
-      const c = isActive ? filterColors[key] : filterInactive[key];
-      btn.style.backgroundColor = c.bg;
-      btn.style.color = c.text;
-      btn.style.borderColor = c.border;
+  let activeSector = 'all';
+  let activeIndustry = 'all';
+
+  function applyFilters() {
+    let visibleCount = 0;
+
+    document.querySelectorAll<HTMLElement>('.case-card').forEach(card => {
+      const sectorMatch = activeSector === 'all' || card.dataset.sector === activeSector;
+      const industryMatch = activeIndustry === 'all' || card.dataset.industry === activeIndustry;
+      const show = sectorMatch && industryMatch;
+      card.style.display = show ? '' : 'none';
+      if (show) visibleCount++;
     });
-    document.querySelectorAll('.case-card').forEach(card => {
-      card.style.display = (sector === 'all' || card.dataset.sector === sector) ? 'block' : 'none';
+
+    // Compteur dynamique
+    const counter = document.getElementById('result-count');
+    if (counter) counter.textContent = `${visibleCount} résultat${visibleCount > 1 ? 's' : ''}`;
+
+    // État vide
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState) emptyState.style.display = visibleCount === 0 ? 'flex' : 'none';
+
+    // "Tous" Expertise : actif si activeSector === 'all'
+    const btnTousSector = document.getElementById('btn-tous-sector') as HTMLElement;
+    const sectorAllActive = activeSector === 'all';
+    btnTousSector.style.backgroundColor = sectorAllActive ? '#111827' : '#fff';
+    btnTousSector.style.color = sectorAllActive ? '#fff' : '#374151';
+    btnTousSector.style.borderColor = sectorAllActive ? '#111827' : '#e5e7eb';
+
+    // "Tous" Secteur : actif si activeIndustry === 'all'
+    const btnTousIndustry = document.getElementById('btn-tous-industry') as HTMLElement;
+    const industryAllActive = activeIndustry === 'all';
+    btnTousIndustry.style.backgroundColor = industryAllActive ? '#111827' : '#fff';
+    btnTousIndustry.style.color = industryAllActive ? '#fff' : '#374151';
+    btnTousIndustry.style.borderColor = industryAllActive ? '#111827' : '#e5e7eb';
+
+    // Boutons secteurs — border toujours colorée, bg change selon l'état
+    document.querySelectorAll<HTMLElement>('.filter-btn-sector').forEach(btn => {
+      const key = btn.dataset.filter!;
+      const isActive = key === activeSector;
+      btn.style.backgroundColor = isActive ? sectorColors[key] : '#fff';
+      btn.style.color = isActive ? '#fff' : sectorColors[key];
+      btn.style.borderColor = sectorColors[key];
+    });
+
+    // Boutons industries
+    document.querySelectorAll<HTMLElement>('.filter-btn-industry').forEach(btn => {
+      const isActive = btn.dataset.filter === activeIndustry;
+      btn.style.backgroundColor = isActive ? '#374151' : '#fff';
+      btn.style.color = isActive ? '#fff' : '#6b7280';
+      btn.style.borderColor = isActive ? '#374151' : '#e5e7eb';
     });
   }
 
-  document.querySelectorAll('.filter-btn').forEach(btn => {
-    btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+  // "Tous" Expertise : réinitialise uniquement le secteur
+  document.getElementById('btn-tous-sector')!.addEventListener('click', () => {
+    activeSector = 'all';
+    applyFilters();
   });
 
-  // View toggle
-  const grid = document.getElementById('grid');
-  document.getElementById('btn-grid').addEventListener('click', () => {
-    grid.classList.remove('list-view');
-    document.getElementById('btn-grid').classList.add('active');
-    document.getElementById('btn-list').classList.remove('active');
-    // restore display on filtered cards
-    document.querySelectorAll('.case-card[style*="none"]').forEach(c => {});
+  // "Tous" Secteur : réinitialise uniquement l'industrie
+  document.getElementById('btn-tous-industry')!.addEventListener('click', () => {
+    activeIndustry = 'all';
+    applyFilters();
   });
-  document.getElementById('btn-list').addEventListener('click', () => {
-    grid.classList.add('list-view');
-    document.getElementById('btn-list').classList.add('active');
-    document.getElementById('btn-grid').classList.remove('active');
-    // list view uses flex, fix hidden cards
-    document.querySelectorAll('.case-card').forEach(c => {
-      if (c.style.display === 'none') return;
-      c.style.display = '';
+
+  // Boutons secteurs (sélection unique)
+  document.querySelectorAll<HTMLElement>('.filter-btn-sector').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSector = btn.dataset.filter!;
+      applyFilters();
     });
+  });
+
+  // Boutons industries (toggle : re-cliquer désélectionne)
+  document.querySelectorAll<HTMLElement>('.filter-btn-industry').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeIndustry = activeIndustry === btn.dataset.filter ? 'all' : btn.dataset.filter!;
+      applyFilters();
+    });
+  });
+
+  // Reset depuis l'état vide
+  document.getElementById('btn-reset-filters')?.addEventListener('click', () => {
+    activeSector = 'all';
+    activeIndustry = 'all';
+    applyFilters();
+  });
+
+  // Toggle grille / liste
+  const grid = document.getElementById('grid')!;
+  document.getElementById('btn-grid')!.addEventListener('click', () => {
+    grid.classList.remove('list-view');
+    document.getElementById('btn-grid')!.classList.add('active');
+    document.getElementById('btn-list')!.classList.remove('active');
+  });
+  document.getElementById('btn-list')!.addEventListener('click', () => {
+    grid.classList.add('list-view');
+    document.getElementById('btn-list')!.classList.add('active');
+    document.getElementById('btn-grid')!.classList.remove('active');
   });
 </script>
