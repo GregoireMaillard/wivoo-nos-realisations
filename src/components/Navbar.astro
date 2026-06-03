@@ -3,28 +3,94 @@ interface Props {
   backLink?: boolean;
 }
 const { backLink = false } = Astro.props;
-const logoHref = backLink ? '/' : undefined;
+
+const BASE = 'https://www.wivoo.fr';
+
+const navItems = [
+  {
+    label: 'Nos solutions',
+    children: [
+      { label: 'Data et IA',          href: `${BASE}/expertises-data-et-ia` },
+      { label: 'Product Management',  href: `${BASE}/expertises-pm` },
+      { label: 'Product Design',      href: `${BASE}/expertises-design` },
+      { label: 'Formations WiAC!',    href: 'https://www.wiacademy.fr/' },
+    ],
+  },
+  { label: 'Nos réalisations', href: '/', active: true },
+  {
+    label: 'Nos contenus',
+    children: [
+      { label: "L'Observatoire des Tendances", href: `${BASE}/l-observatoire-des-tendances` },
+      { label: 'Nos Podcasts',                 href: `${BASE}/nos-podcasts` },
+      { label: 'Nos Émissions',                href: `${BASE}/nos-emissions` },
+      { label: 'Notre Blog',                   href: `${BASE}/blog` },
+    ],
+  },
+  {
+    label: 'À propos de nous',
+    children: [
+      { label: 'Notre ADN',          href: `${BASE}/notre-histoire` },
+      { label: 'Nos engagements',    href: `${BASE}/notre-engagement` },
+      { label: 'La vie chez Wivoo',  href: `${BASE}/la-vie-chez-wivoo` },
+    ],
+  },
+  {
+    label: 'Carrière',
+    children: [
+      { label: 'Nous rejoindre', href: `${BASE}/deviens-wiver` },
+    ],
+  },
+];
 ---
+
+<style>
+  .nav-item:hover .nav-dropdown,
+  .nav-dropdown:hover {
+    display: block;
+  }
+</style>
 
 <nav class="w-full border-b border-gray-100 bg-white sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-    {backLink ? (
-      <a href="/">
-        <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/6867e403657af2e53b357217_LOGO-Wivoo-RGB_BLUE.svg"
-             alt="Wivoo" class="h-16" />
-      </a>
-    ) : (
+    <a href="/">
       <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/6867e403657af2e53b357217_LOGO-Wivoo-RGB_BLUE.svg"
            alt="Wivoo" class="h-16" />
-    )}
+    </a>
+
     <ul class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
-      <li class="cursor-default select-none">Nos solutions +</li>
-      <li class="cursor-default select-none font-semibold text-gray-900 underline underline-offset-4 decoration-2">Nos réalisations +</li>
-      <li class="cursor-default select-none">Nos contenus +</li>
-      <li class="cursor-default select-none">A propos de nous +</li>
-      <li class="cursor-default select-none">Carrière +</li>
+      {navItems.map(item => (
+        <li class="nav-item relative flex items-center">
+          {item.href ? (
+            <a href={item.href}
+               class={`py-2 transition-colors hover:text-gray-900 ${item.active ? 'font-semibold text-gray-900 underline underline-offset-4 decoration-2' : ''}`}>
+              {item.label}
+            </a>
+          ) : (
+            <>
+              <span class="flex items-center gap-1 py-2 cursor-default select-none hover:text-gray-900 transition-colors">
+                {item.label}
+                <svg class="w-3 h-3 mt-px" viewBox="0 0 12 12" fill="currentColor">
+                  <path d="M6 8L1 3h10z"/>
+                </svg>
+              </span>
+              <div class="nav-dropdown hidden absolute top-full left-1/2 -translate-x-1/2 z-50">
+                <div class="h-3"></div>
+                <div class="bg-white rounded-xl shadow-lg border border-gray-100 py-2 min-w-[220px]">
+                  {item.children?.map(child => (
+                    <a href={child.href}
+                       class="block px-5 py-2.5 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-colors whitespace-nowrap">
+                      {child.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+        </li>
+      ))}
     </ul>
-    <a href="https://www.wivoo.fr/contact" target="_blank"
+
+    <a href="https://www.wivoo.fr/contact"
        class="bg-[#5BDF6A] text-gray-900 font-bold text-sm px-6 py-3 rounded-full hover:opacity-90 transition-opacity">
       Prendre RDV
     </a>

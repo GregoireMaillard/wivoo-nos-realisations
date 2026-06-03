@@ -32,8 +32,3 @@ Pages de sites concurrentes pertinentes
 ### Contraintes de fidélité visuelle
 - Respecter la charte graphique Wivoo (couleurs, typographie)
 - Les 8 études de cas existantes doivent être représentées
-
-## Stack prototype (Phase 1)
-- **HTML + Tailwind CSS via CDN** — fichier unique `index.html`, aucun build
-- Données mockées inline en JS dans le même fichier
-- Pas de backend, pas de framework
