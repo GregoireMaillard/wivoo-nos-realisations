@@ -32,13 +32,13 @@ const cases = readCases().filter(c => c.published !== false);
   <!-- FilterBar -->
   <div class="max-w-5xl mx-auto px-6 mb-10">
     <div class="flex flex-wrap gap-2 justify-center" id="filters">
-      <button onclick="filter('all')" data-filter="all"
+      <button data-filter="all"
         class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
         style="background-color:#111827; color:#fff; border-color:#111827;">
         Tous
       </button>
       {(['Product', 'AI', 'Data', 'Design'] as const).map(s => (
-        <button onclick={`filter('${s}')`} data-filter={s}
+        <button data-filter={s}
           class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200"
           style={`background-color:#fff; color:${SECTOR_COLORS[s].hex}; border-color:${SECTOR_COLORS[s].hex};`}>
           {s}
@@ -95,7 +95,7 @@ const cases = readCases().filter(c => c.published !== false);
     Design:  { bg: '#fff', text: '#db2777', border: '#db2777' },
   };
 
-  function filter(sector) {
+  function applyFilter(sector) {
     document.querySelectorAll('.filter-btn').forEach(btn => {
       const key = btn.dataset.filter;
       const isActive = key === sector;
@@ -108,4 +108,8 @@ const cases = readCases().filter(c => c.published !== false);
       card.style.display = (sector === 'all' || card.dataset.sector === sector) ? 'block' : 'none';
     });
   }
+
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+  });
 </script>
