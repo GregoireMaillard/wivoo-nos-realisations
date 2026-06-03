@@ -262,5 +262,36 @@
       "Renforcement de la transversalité via des processus collaboratifs améliorés",
       "Réalisation d'un Proof of Concept démontrant les gains en productivité"
     ]
+  },
+  {
+    "id": 9,
+    "slug": "superproductivite-des-equipes-grace-a-l-ia-et-automatisations",
+    "sector": "AI",
+    "client": "Funecap",
+    "title": "Superproductivité des équipes grace à l'IA et automatisations",
+    "subtitle": "Direction Produit & IA",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "image": "/case-images/superproductivite-des-equipes-grace-a-l-ia-et-automatisations-6cjs.jpg",
+    "published": true,
+    "kpis": [
+      {
+        "value": "+20000%",
+        "label": "Productivité :)"
+      },
+      {
+        "value": "+ 3000%",
+        "label": "Vélocité"
+      },
+      {
+        "value": "-50%",
+        "label": "bugs en prod"
+      }
+    ],
+    "challenge": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "solution": [
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad",
+      "minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in",
+      "voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    ]
   }
 ]
