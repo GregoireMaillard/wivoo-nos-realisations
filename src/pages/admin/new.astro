@@ -2,7 +2,8 @@
 export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { readCasesLive, writeCases, ConcurrentEditError } from '../../lib/cases';
+import ImageUpload from '../../components/ImageUpload.astro';
+import { readCasesLive, writeCasesWithImage, validateImageFile, buildImageUpload, ConcurrentEditError } from '../../lib/cases';
 import type { Case } from '../../lib/cases';
 
 let error = '';
@@ -12,34 +13,42 @@ if (Astro.request.method === 'POST') {
   const cases = await readCasesLive();
 
   const slug = (form.get('slug') as string).trim();
+  const file = form.get('imageFile');
+
   if (cases.find(c => c.slug === slug)) {
     error = `Le slug "${slug}" existe déjà.`;
   } else {
-    const newCase: Case = {
-      id:          Math.max(0, ...cases.map(c => c.id)) + 1,
-      slug,
-      sector:      form.get('sector') as Case['sector'],
-      client:      (form.get('client') as string).trim(),
-      title:       (form.get('title') as string).trim(),
-      subtitle:    (form.get('subtitle') as string).trim(),
-      description: (form.get('description') as string).trim(),
-      image:       (form.get('image') as string).trim(),
-      published:   form.get('published') === 'on',
-      kpis: [0, 1, 2].map(i => ({
-        value: (form.get(`kpi${i}_value`) as string || '').trim(),
-        label: (form.get(`kpi${i}_label`) as string || '').trim(),
-      })).filter(k => k.value || k.label),
-      challenge: (form.get('challenge') as string).trim(),
-      solution: (form.get('solution') as string).split('\n').map(s => s.trim()).filter(Boolean),
-    };
-    cases.push(newCase);
-    try {
-      await writeCases(cases);
-      return Astro.redirect('/admin?saved=1');
-    } catch (e) {
-      error = e instanceof ConcurrentEditError
-        ? 'Quelqu’un a modifié les réalisations en même temps. Vérifiez vos saisies et réenregistrez.'
-        : 'Une erreur est survenue lors de l’enregistrement. Réessayez dans un instant.';
+    const imgError = validateImageFile(file);
+    if (imgError) {
+      error = imgError;
+    } else {
+      const { image, path } = await buildImageUpload(file as File, slug);
+      const newCase: Case = {
+        id:          Math.max(0, ...cases.map(c => c.id)) + 1,
+        slug,
+        sector:      form.get('sector') as Case['sector'],
+        client:      (form.get('client') as string).trim(),
+        title:       (form.get('title') as string).trim(),
+        subtitle:    (form.get('subtitle') as string).trim(),
+        description: (form.get('description') as string).trim(),
+        image:       path,
+        published:   form.get('published') === 'on',
+        kpis: [0, 1, 2].map(i => ({
+          value: (form.get(`kpi${i}_value`) as string || '').trim(),
+          label: (form.get(`kpi${i}_label`) as string || '').trim(),
+        })).filter(k => k.value || k.label),
+        challenge: (form.get('challenge') as string).trim(),
+        solution: (form.get('solution') as string).split('\n').map(s => s.trim()).filter(Boolean),
+      };
+      cases.push(newCase);
+      try {
+        await writeCasesWithImage(cases, image);
+        return Astro.redirect('/admin?saved=1');
+      } catch (e) {
+        error = e instanceof ConcurrentEditError
+          ? 'Quelqu’un a modifié les réalisations en même temps. Vérifiez vos saisies et réenregistrez.'
+          : 'Une erreur est survenue lors de l’enregistrement. Réessayez dans un instant.';
+      }
     }
   }
 }
@@ -57,7 +66,7 @@ if (Astro.request.method === 'POST') {
     {error && (
       <div class="mb-6 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>
     )}
-    <form method="POST" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
       <slot name="fields" />
       <!-- Infos principales -->
       <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
@@ -94,10 +103,7 @@ if (Astro.request.method === 'POST') {
           <label class="block text-xs font-medium text-gray-500 mb-1">Description courte (carte) *</label>
           <textarea name="description" required rows="2" placeholder="Résumé en 1-2 phrases affiché sur la carte au survol" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
         </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1">URL de l'image *</label>
-          <input name="image" type="url" required placeholder="https://cdn.example.com/image.jpg" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
+        <ImageUpload required={true} />
         <div class="flex items-center gap-3">
           <input name="published" type="checkbox" checked id="pub" class="w-4 h-4 rounded" />
           <label for="pub" class="text-sm text-gray-600">Publié (visible sur le site vitrine)</label>

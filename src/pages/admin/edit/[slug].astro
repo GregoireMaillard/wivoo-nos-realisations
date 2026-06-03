@@ -2,8 +2,9 @@
 export const prerender = false;
 
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { readCasesLive, writeCases, ConcurrentEditError } from '../../../lib/cases';
-import type { Case } from '../../../lib/cases';
+import ImageUpload from '../../../components/ImageUpload.astro';
+import { readCasesLive, writeCasesWithImage, validateImageFile, buildImageUpload, ConcurrentEditError } from '../../../lib/cases';
+import type { Case, NewImage } from '../../../lib/cases';
 
 const { slug } = Astro.params;
 const cases = await readCasesLive();
@@ -17,9 +18,24 @@ if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
   const newSlug = (form.get('slug') as string).trim();
 
+  const file = form.get('imageFile');
+  const hasNewFile = file instanceof File && file.size > 0;
+  const imgError = hasNewFile ? validateImageFile(file) : null;
+
   if (newSlug !== slug && cases.find(x => x.slug === newSlug)) {
     error = `Le slug "${newSlug}" existe déjà.`;
+  } else if (imgError) {
+    error = imgError;
   } else {
+    // Conserve l'image actuelle si aucun nouveau fichier n'est uploadé.
+    let imagePath = c.image;
+    let newImage: NewImage | null = null;
+    if (hasNewFile) {
+      const built = await buildImageUpload(file as File, newSlug);
+      newImage = built.image;
+      imagePath = built.path;
+    }
+
     const updated: Case = {
       id:          c.id,
       slug:        newSlug,
@@ -28,7 +44,7 @@ if (Astro.request.method === 'POST') {
       title:       (form.get('title') as string).trim(),
       subtitle:    (form.get('subtitle') as string).trim(),
       description: (form.get('description') as string).trim(),
-      image:       (form.get('image') as string).trim(),
+      image:       imagePath,
       published:   form.get('published') === 'on',
       kpis: [0, 1, 2].map(i => ({
         value: (form.get(`kpi${i}_value`) as string || '').trim(),
@@ -38,7 +54,7 @@ if (Astro.request.method === 'POST') {
       solution: (form.get('solution') as string).split('\n').map(s => s.trim()).filter(Boolean),
     };
     try {
-      await writeCases(cases.map(x => x.slug === slug ? updated : x));
+      await writeCasesWithImage(cases.map(x => x.slug === slug ? updated : x), newImage);
       return Astro.redirect('/admin?saved=1');
     } catch (e) {
       error = e instanceof ConcurrentEditError
@@ -61,7 +77,7 @@ if (Astro.request.method === 'POST') {
     {error && (
       <div class="mb-6 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">{error}</div>
     )}
-    <form method="POST" class="space-y-6">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
       <!-- Infos principales -->
       <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
         <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wide">Infos principales</h2>
@@ -97,10 +113,7 @@ if (Astro.request.method === 'POST') {
           <label class="block text-xs font-medium text-gray-500 mb-1">Description courte (carte) *</label>
           <textarea name="description" required rows="2" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none">{c.description}</textarea>
         </div>
-        <div>
-          <label class="block text-xs font-medium text-gray-500 mb-1">URL de l'image *</label>
-          <input name="image" type="url" required value={c.image} class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        </div>
+        <ImageUpload current={c.image} />
         <div class="flex items-center gap-3">
           <input name="published" type="checkbox" id="pub" checked={c.published !== false} class="w-4 h-4 rounded" />
           <label for="pub" class="text-sm text-gray-600">Publié (visible sur le site vitrine)</label>

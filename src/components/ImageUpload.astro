@@ -1,0 +1,93 @@
+---
+/**
+ * Composant d'upload d'image pour le back-office.
+ * - Aperçu immédiat avant envoi (image actuelle ou fichier sélectionné).
+ * - Validation côté navigateur : type image + 4 Mo maximum.
+ * - L'utilisateur ne manipule aucun chemin : il choisit un fichier, c'est tout.
+ *
+ * Props :
+ *   name     — nom du champ fichier (défaut "imageFile")
+ *   current  — image actuelle (URL ou chemin) à pré-afficher, optionnel
+ *   required — image obligatoire (création) ou non (édition)
+ */
+interface Props {
+  name?: string;
+  current?: string;
+  required?: boolean;
+}
+const { name = 'imageFile', current = '', required = false } = Astro.props;
+---
+
+<div class="image-upload">
+  <label class="block text-xs font-medium text-gray-500 mb-1">
+    Image de couverture {required && <span class="text-gray-400">*</span>}
+  </label>
+
+  <div class="flex items-center gap-4 border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+    <!-- Aperçu -->
+    <div class="w-28 h-20 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0 flex items-center justify-center">
+      <img class="iu-preview w-full h-full object-cover" src={current} alt="" style={current ? '' : 'display:none'} />
+      <span class="iu-placeholder text-gray-300 text-xs px-2 text-center" style={current ? 'display:none' : ''}>Aucune image</span>
+    </div>
+
+    <!-- Bouton + infos -->
+    <div class="flex-1 min-w-0">
+      <button type="button"
+              class="iu-trigger text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg px-4 py-2 hover:bg-gray-50 transition-colors cursor-pointer">
+        Choisir une image…
+      </button>
+      <p class="iu-filename text-xs text-gray-500 mt-2 truncate">
+        {current ? 'Image actuelle conservée si aucune nouvelle n’est choisie.' : ''}
+      </p>
+      <p class="text-xs text-gray-400 mt-1">
+        JPG, PNG, WebP, GIF, AVIF ou SVG — <span class="font-semibold">4 Mo maximum</span>.
+      </p>
+      <p class="iu-error text-xs text-red-600 mt-1" style="display:none"></p>
+    </div>
+
+    <input type="file" name={name} accept="image/*" required={required} class="iu-input hidden" />
+  </div>
+</div>
+
+<script>
+  const MAX = 4 * 1024 * 1024; // 4 Mo
+
+  document.querySelectorAll('.image-upload').forEach((root) => {
+    const input = root.querySelector('.iu-input') as HTMLInputElement | null;
+    const trigger = root.querySelector('.iu-trigger') as HTMLButtonElement | null;
+    const preview = root.querySelector('.iu-preview') as HTMLImageElement | null;
+    const placeholder = root.querySelector('.iu-placeholder') as HTMLElement | null;
+    const filename = root.querySelector('.iu-filename') as HTMLElement | null;
+    const errorEl = root.querySelector('.iu-error') as HTMLElement | null;
+    if (!input) return;
+
+    function showError(msg: string) {
+      input!.value = '';
+      if (errorEl) { errorEl.textContent = msg; errorEl.style.display = ''; }
+    }
+
+    trigger?.addEventListener('click', () => input.click());
+
+    input.addEventListener('change', () => {
+      if (errorEl) { errorEl.style.display = 'none'; errorEl.textContent = ''; }
+      const file = input.files?.[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showError('Le fichier doit être une image.');
+        return;
+      }
+      if (file.size > MAX) {
+        const mo = (file.size / (1024 * 1024)).toFixed(1);
+        showError(`Image trop lourde (${mo} Mo). Maximum 4 Mo.`);
+        return;
+      }
+
+      // Aperçu instantané
+      const url = URL.createObjectURL(file);
+      if (preview) { preview.src = url; preview.style.display = ''; }
+      if (placeholder) placeholder.style.display = 'none';
+      if (filename) filename.textContent = file.name;
+    });
+  });
+</script>
