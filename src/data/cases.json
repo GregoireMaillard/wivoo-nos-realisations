@@ -41,7 +41,7 @@
     "subtitle": "Digital Factory — BTP",
     "description": "Mise en place d'un design system unifié et d'une roadmap structurée pour accélérer les cycles de delivery.",
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b11e934caeaefb31716d6_iStock-1202957913%20(1).jpg",
-    "published": false,
+    "published": true,
     "kpis": [
       {
         "value": "-50%",
