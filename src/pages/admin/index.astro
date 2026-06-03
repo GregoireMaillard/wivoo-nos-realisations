@@ -54,7 +54,7 @@ const flashError = params.get('error'); // 'conflict' | '1' | null
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-6 py-8">
+  <main class="max-w-5xl mx-auto px-6 py-8" data-remote={remote ? '1' : '0'}>
     {flashSaved && (
       <div class="mb-4 bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-3 rounded-lg">
         ✓ Enregistré.{' '}
@@ -149,6 +149,11 @@ const flashError = params.get('error'); // 'conflict' | '1' | null
     // éviter les re-clics qui empileraient des commits/redéploiements inutiles.
     // Le cooldown est stocké dans localStorage afin de survivre au rechargement
     // de page provoqué par le POST.
+    // En local, l'écriture est instantanée (writeFileSync) et il n'y a pas de
+    // rebuild Vercel : le cooldown n'a aucun sens et serait trompeur. On ne
+    // l'active donc que lorsque la persistance est distante (prod).
+    const IS_REMOTE = document.querySelector('main')?.dataset.remote === '1';
+
     const COOLDOWN_MS = 60000;
     const KEY = 'wivoo-admin-toggle-cooldown';
 
@@ -160,15 +165,17 @@ const flashError = params.get('error'); // 'conflict' | '1' | null
     }
 
     // Enregistre le cooldown au moment de la soumission (avant le rechargement).
-    document.querySelectorAll('.toggle-form').forEach((form) => {
-      form.addEventListener('submit', () => {
-        const slug = form.dataset.slug;
-        if (!slug) return;
-        const cd = getCooldowns();
-        cd[slug] = Date.now() + COOLDOWN_MS;
-        setCooldowns(cd);
+    if (IS_REMOTE) {
+      document.querySelectorAll('.toggle-form').forEach((form) => {
+        form.addEventListener('submit', () => {
+          const slug = form.dataset.slug;
+          if (!slug) return;
+          const cd = getCooldowns();
+          cd[slug] = Date.now() + COOLDOWN_MS;
+          setCooldowns(cd);
+        });
       });
-    });
+    }
 
     // Applique l'état (désactivé + compte à rebours) à chaque seconde.
     function applyCooldowns() {
@@ -199,7 +206,9 @@ const flashError = params.get('error'); // 'conflict' | '1' | null
       if (changed) setCooldowns(cd);
     }
 
-    applyCooldowns();
-    setInterval(applyCooldowns, 1000);
+    if (IS_REMOTE) {
+      applyCooldowns();
+      setInterval(applyCooldowns, 1000);
+    }
   </script>
 </BaseLayout>
