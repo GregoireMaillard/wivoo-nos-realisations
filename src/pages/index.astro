@@ -11,69 +11,100 @@ const cases = readCases().filter(c => c.published !== false);
 
 <BaseLayout title="Nos Réalisations — Wivoo">
   <style>
-    .card-overlay {
-      opacity: 0;
-      transition: opacity 0.3s ease;
+    .case-card { transition: box-shadow .2s, transform .2s; }
+    .case-card:hover { box-shadow: 0 8px 32px rgba(0,0,0,.12); transform: translateY(-2px); }
+    .case-card:hover .card-img img { transform: scale(1.04); }
+    .card-img img { transition: transform .3s; }
+    .card-title {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
-    .case-card:hover .card-overlay { opacity: 1; }
+    .kpi-label {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-cta { transition: gap .15s; }
+    .case-card:hover .card-cta { gap: 8px; }
   </style>
 
   <Navbar />
 
   <!-- Header -->
   <header class="w-full bg-[#f0eeff] pt-16 pb-10">
-  <div class="max-w-5xl mx-auto px-6 text-center">
-    <p class="text-sm font-semibold tracking-widest text-gray-400 uppercase mb-3">Portfolio</p>
-    <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Réalisations</h1>
-    <p class="text-lg text-gray-500 max-w-xl mx-auto">
-      Découvrez comment nous aidons nos clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design.
-    </p>
-  </div>
+    <div class="max-w-5xl mx-auto px-6 text-center">
+      <p class="text-sm font-semibold tracking-widest text-[#7c3aed] uppercase mb-3">Portfolio</p>
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Réalisations</h1>
+      <p class="text-lg text-gray-500 max-w-xl mx-auto">
+        Découvrez comment nous aidons nos clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design.
+      </p>
+    </div>
   </header>
 
   <!-- FilterBar -->
   <div class="w-full bg-[#f0eeff] pb-12">
-  <div class="max-w-5xl mx-auto px-6">
-    <div class="flex flex-wrap gap-2 justify-center" id="filters">
-      <button data-filter="all"
-        class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 cursor-pointer"
-        style="background-color:#111827; color:#fff; border-color:#111827;">
-        Tous
-      </button>
-      {(['Product', 'AI', 'Data', 'Design'] as const).map(s => (
-        <button data-filter={s}
+    <div class="max-w-5xl mx-auto px-6">
+      <div class="flex flex-wrap gap-2 justify-center" id="filters">
+        <button data-filter="all"
           class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 cursor-pointer"
-          style={`background-color:#fff; color:${SECTOR_COLORS[s].hex}; border-color:${SECTOR_COLORS[s].hex};`}>
-          {s}
+          style="background-color:#111827; color:#fff; border-color:#111827;">
+          Tous
         </button>
-      ))}
+        {(['Product', 'AI', 'Data', 'Design'] as const).map(s => (
+          <button data-filter={s}
+            class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 cursor-pointer"
+            style={`background-color:#fff; color:${SECTOR_COLORS[s].hex}; border-color:${SECTOR_COLORS[s].hex};`}>
+            {s}
+          </button>
+        ))}
+      </div>
     </div>
-  </div>
   </div>
 
   <!-- Grid -->
   <main class="max-w-7xl mx-auto px-6 pt-10 pb-20">
-    <div id="grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {cases.map(c => (
-        <a href={`/case-studies/${c.slug}`}
-           class="case-card group relative rounded-2xl overflow-hidden block aspect-[4/3]"
-           style={`background-image: url('${c.image}'); background-size: cover; background-position: center;`}
-           data-sector={c.sector}>
-          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-          <div class="card-overlay absolute inset-0 bg-black/40"></div>
-          <span class="absolute top-4 left-4 z-10 text-xs font-semibold px-3 py-1 rounded-full text-white"
-                style={`background-color:${SECTOR_COLORS[c.sector].hex};`}>
-            {c.sector}
-          </span>
-          <div class="absolute bottom-0 left-0 right-0 z-10 p-6">
-            <h2 class="text-white font-bold text-lg leading-snug mb-3">{c.title}</h2>
-            <p class="card-description text-white/80 text-sm leading-relaxed mb-4">{c.description}</p>
-            <span class="inline-flex items-center gap-1 text-white text-sm font-medium">
-              Voir le cas <span>→</span>
-            </span>
-          </div>
-        </a>
-      ))}
+    <div id="grid" class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {cases.map(c => {
+        const industry = c.subtitle.includes('—') ? c.subtitle.split('—')[1].trim() : '';
+        const kpi = c.kpis[0];
+        return (
+          <a href={`/case-studies/${c.slug}`}
+             class="case-card bg-white rounded-2xl overflow-hidden flex flex-col shadow-sm"
+             data-sector={c.sector}>
+            <!-- Image -->
+            <div class="card-img relative overflow-hidden" style="aspect-ratio:16/6; flex-shrink:0;">
+              <img src={c.image} alt={c.title} class="w-full h-full object-cover block" />
+              <div class="absolute bottom-3 left-3 flex gap-1.5 flex-wrap">
+                <span class="text-xs font-bold px-2.5 py-1 rounded-full text-white"
+                      style={`background-color:${SECTOR_COLORS[c.sector].hex};`}>
+                  {c.sector}
+                </span>
+                {industry && (
+                  <span class="text-xs font-semibold px-2.5 py-1 rounded-full text-gray-700"
+                        style="background:rgba(255,255,255,0.92); backdrop-filter:blur(4px);">
+                    {industry}
+                  </span>
+                )}
+              </div>
+            </div>
+            <!-- Content -->
+            <div class="p-4 flex flex-col flex-1">
+              <h2 class="card-title text-sm font-bold text-gray-900 leading-snug flex-1 mb-2">{c.title}</h2>
+              <hr class="border-gray-100 mb-2" />
+              <p class="text-2xl font-extrabold leading-none mb-1" style={`color:${SECTOR_COLORS[c.sector].hex};`}>
+                {kpi.value}
+              </p>
+              <p class="kpi-label text-xs text-gray-500 leading-relaxed mb-3">{kpi.label}</p>
+              <span class="card-cta inline-flex items-center gap-1 text-xs font-semibold text-gray-500">
+                Voir le cas →
+              </span>
+            </div>
+          </a>
+        );
+      })}
     </div>
   </main>
 
