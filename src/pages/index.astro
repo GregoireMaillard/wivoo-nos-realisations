@@ -32,7 +32,7 @@ const cases = readCases().filter(c => c.published !== false);
   </header>
 
   <!-- FilterBar -->
-  <div class="w-full bg-[#f0eeff] pb-10">
+  <div class="w-full bg-[#f0eeff] pb-12">
   <div class="max-w-5xl mx-auto px-6">
     <div class="flex flex-wrap gap-2 justify-center" id="filters">
       <button data-filter="all"
@@ -52,8 +52,8 @@ const cases = readCases().filter(c => c.published !== false);
   </div>
 
   <!-- Grid -->
-  <main class="max-w-5xl mx-auto px-6 pb-20">
-    <div id="grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+  <main class="max-w-7xl mx-auto px-6 pt-10 pb-20">
+    <div id="grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
       {cases.map(c => (
         <a href={`/case-studies/${c.slug}`}
            class="case-card group relative rounded-2xl overflow-hidden block aspect-[4/3]"
