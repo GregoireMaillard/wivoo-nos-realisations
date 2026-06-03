@@ -9,7 +9,7 @@ Un back-office d'administration a été ajouté.
 ---
 
 ### Ce qui est terminé
-- `src/pages/index.astro` — page principale avec grille 3 colonnes, filtres par secteur, hero violet clair, fond gris
+- `src/pages/index.astro` — page principale avec toggle grille/liste, filtres par secteur, hero violet clair, fond gris
 - `src/pages/case-studies/[slug].astro` — pages détail avec bouton retour, breadcrumb, KPIs bordés, défi, solution, CTA
 - `src/pages/admin/index.astro` — liste des études de cas (back-office)
 - `src/pages/admin/new.astro` — formulaire de création d'une nouvelle étude de cas
@@ -75,7 +75,7 @@ PrototypeChallengeShowcase_V3/
 
 ### Git — état local
 - Branche : `main`
-- 15 commits effectués, tout est commité et pushé
+- 17 commits effectués, tout est commité et pushé
 - Remote GitHub (SSH) : `git@github.com:GregoireMaillard/wivoo-nos-realisations.git`
 - **Push OK** — remote passé en SSH lors de la session du 03/06/2026
 
@@ -99,6 +99,7 @@ PrototypeChallengeShowcase_V3/
 | `3aa3e19` | Refonte cards : design split image/contenu + KPI + badges industrie |
 | `0ea69d0` | Fond gris clair global pour contraster avec les cards blanches |
 | `e346489` | Pages détail : bouton "← Retour" + bordure colorée sur les cards KPI |
+| `4c49a42` | Toggle grille/liste centré dans la barre des filtres + suppression label "Portfolio" |
 
 ---
 
