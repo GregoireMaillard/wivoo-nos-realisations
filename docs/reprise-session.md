@@ -6,6 +6,13 @@
 Le projet a migré de HTML statique vers **Astro 6.4.1** + **Tailwind CSS v4** + adaptateur **@astrojs/vercel**.
 Un back-office d'administration a été ajouté.
 
+### Back-office — persistance (ajout 03/06/2026)
+Le back-office persiste désormais en production : `writeCases()` (`src/lib/cases.ts`)
+commit `cases.json` sur GitHub via l'API Contents quand `GITHUB_TOKEN` est présent
+(prod Vercel), sinon `writeFileSync` en local. Le commit déclenche le rebuild Vercel
+(~1 min). Retry sur conflit SHA (`ConcurrentEditError`). **Pas encore d'authentification
+sur `/admin`** — voir `docs/back-office.md` (env vars, token, TODO sécurité).
+
 ---
 
 ### Ce qui est terminé
@@ -136,7 +143,8 @@ PrototypeChallengeShowcase_V3/
 - Navigation entre cas (précédent / suivant) sur les pages détail
 - Mode sombre
 - SEO : og:image et meta description par cas
-- Back-office : rendre l'édition des cas fonctionnelle (write to JSON)
+- **Back-office : authentification** (actuellement `/admin` est OUVERT — à sécuriser avant toute exposition réelle, cf. `docs/back-office.md`)
+- Back-office phase 2 : encart d'aide permanent dans l'admin (reporté à la demande)
 - Hero : ajouter une accroche différenciante (preuve sociale, chiffre agrégé)
 - Point 5 audit UX non traité : supprimer le `<hr>` dans les cards (bruit visuel)
 

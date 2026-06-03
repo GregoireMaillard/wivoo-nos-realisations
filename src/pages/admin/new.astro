@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { readCases, writeCases } from '../../lib/cases';
+import { readCases, writeCases, ConcurrentEditError } from '../../lib/cases';
 import type { Case } from '../../lib/cases';
 
 let error = '';
@@ -33,8 +33,14 @@ if (Astro.request.method === 'POST') {
       solution: (form.get('solution') as string).split('\n').map(s => s.trim()).filter(Boolean),
     };
     cases.push(newCase);
-    writeCases(cases);
-    return Astro.redirect('/admin');
+    try {
+      await writeCases(cases);
+      return Astro.redirect('/admin?saved=1');
+    } catch (e) {
+      error = e instanceof ConcurrentEditError
+        ? 'Quelqu’un a modifié les réalisations en même temps. Vérifiez vos saisies et réenregistrez.'
+        : 'Une erreur est survenue lors de l’enregistrement. Réessayez dans un instant.';
+    }
   }
 }
 ---

@@ -10,9 +10,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be9a1714406fbdfff024d_iStock-941051278.jpg",
     "published": true,
     "kpis": [
-      { "value": "+20%", "label": "d'augmentation de la performance des scores prédictifs (X-Sell, LTV, Churn)" },
-      { "value": "1", "label": "unique source consolidée centralisant toutes les analyses client via un nouvel outil d'insights" },
-      { "value": "360°", "label": "de connaissance client grâce à des dashboards dataviz avancés" }
+      {
+        "value": "+20%",
+        "label": "d'augmentation de la performance des scores prédictifs (X-Sell, LTV, Churn)"
+      },
+      {
+        "value": "1",
+        "label": "unique source consolidée centralisant toutes les analyses client via un nouvel outil d'insights"
+      },
+      {
+        "value": "360°",
+        "label": "de connaissance client grâce à des dashboards dataviz avancés"
+      }
     ],
     "challenge": "Dans un environnement en pleine transformation digitale, l'équipe Data & Innovation d'un leader du marché a fait appel à l'expertise de Wivoo pour renforcer la personnalisation des communications client grâce à des solutions data-driven. Les objectifs étaient de refondre les scores prédictifs (RFM, X-Sell/Up-Sell, Lifetime Value, Churn) et de structurer la collaboration entre l'équipe Data et l'équipe CRM.",
     "solution": [
@@ -34,9 +43,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b11e934caeaefb31716d6_iStock-1202957913%20(1).jpg",
     "published": true,
     "kpis": [
-      { "value": "-50%", "label": "de réduction des appels clients vers les agences" },
-      { "value": "+16%", "label": "d'augmentation de l'utilisation de l'espace client digital (de 8% à 24%)" },
-      { "value": "35%", "label": "d'adoption moyenne de la solution nationale pour les grands comptes" }
+      {
+        "value": "-50%",
+        "label": "de réduction des appels clients vers les agences"
+      },
+      {
+        "value": "+16%",
+        "label": "d'augmentation de l'utilisation de l'espace client digital (de 8% à 24%)"
+      },
+      {
+        "value": "35%",
+        "label": "d'adoption moyenne de la solution nationale pour les grands comptes"
+      }
     ],
     "challenge": "Dans un secteur où les processus client sont souvent complexes et peu digitalisés, le client avait besoin d'une refonte complète de ses outils digitaux pour améliorer l'expérience tout en structurant un nouveau département Digital Experience. Les enjeux incluaient la mise en place de méthodologies agiles, l'optimisation des parcours client (commandes, facturation, suivi) et l'augmentation de l'adoption des services digitaux grâce à une meilleure UX.",
     "solution": [
@@ -57,9 +75,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b102b4537dfe7a7498ab2_iStock-1778307374.jpg",
     "published": true,
     "kpis": [
-      { "value": "+200%", "label": "d'augmentation de la visibilité digitale des marques" },
-      { "value": "+30%", "label": "d'amélioration des taux de conversion sur les parcours d'achat" },
-      { "value": "10", "label": "pays déployés avec sites e-commerce localisés pour 3 grandes marques" }
+      {
+        "value": "+200%",
+        "label": "d'augmentation de la visibilité digitale des marques"
+      },
+      {
+        "value": "+30%",
+        "label": "d'amélioration des taux de conversion sur les parcours d'achat"
+      },
+      {
+        "value": "10",
+        "label": "pays déployés avec sites e-commerce localisés pour 3 grandes marques"
+      }
     ],
     "challenge": "Dans un marché en pleine transformation digitale, ce leader mondial du secteur pharmaceutique a entrepris de développer une stratégie e-commerce pour ses marques de médicaments sans ordonnance. L'enjeu : concevoir des sites cohérents avec les standards globaux tout en s'adaptant aux besoins et contraintes locales, et coordonner des équipes réparties sur plusieurs continents.",
     "solution": [
@@ -81,9 +108,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b0d5845187f94044319a6_iStock-1182622625%20(1).jpg",
     "published": true,
     "kpis": [
-      { "value": "+35%", "label": "de fonctionnalités existantes refondues pour un chatbot couvrant plus de 400 intentions" },
-      { "value": "39 000", "label": "variations intégrées, réduisant les erreurs et optimisant la pertinence des réponses" },
-      { "value": "+", "label": "Engagement accru grâce à l'intégration de contenus multimédias (images, vidéos, GIF)" }
+      {
+        "value": "+35%",
+        "label": "de fonctionnalités existantes refondues pour un chatbot couvrant plus de 400 intentions"
+      },
+      {
+        "value": "39 000",
+        "label": "variations intégrées, réduisant les erreurs et optimisant la pertinence des réponses"
+      },
+      {
+        "value": "+",
+        "label": "Engagement accru grâce à l'intégration de contenus multimédias (images, vidéos, GIF)"
+      }
     ],
     "challenge": "Deux obstacles majeurs se posaient : le chatbot devait gérer un périmètre étendu avec des intentions variées et des scénarios complexes liés aux nouvelles offres, tout en améliorant simultanément l'expérience utilisateur grâce à des dialogues plus fluides, pertinents et contextuellement adaptés, avec un minimum d'erreurs.",
     "solution": [
@@ -105,9 +141,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be2641d60740223500383_iStock-1285296688.jpg",
     "published": true,
     "kpis": [
-      { "value": "+300%", "label": "d'augmentation du trafic vers les pages de marque immersives" },
-      { "value": "20%", "label": "de taux de conversion sur les cartes cadeaux réintroduites (zone US)" },
-      { "value": "+100K", "label": "nouvelles inscriptions sur la plateforme d'événements et de concours" }
+      {
+        "value": "+300%",
+        "label": "d'augmentation du trafic vers les pages de marque immersives"
+      },
+      {
+        "value": "20%",
+        "label": "de taux de conversion sur les cartes cadeaux réintroduites (zone US)"
+      },
+      {
+        "value": "+100K",
+        "label": "nouvelles inscriptions sur la plateforme d'événements et de concours"
+      }
     ],
     "challenge": "Renforcer l'engagement en ligne tout en soutenant une transformation majeure de l'identité visuelle et du programme de fidélité. Les priorités incluaient l'alignement de la vision de marque, l'amélioration des parcours checkout et catalogue produit, et le développement de plateformes d'engagement communautaire.",
     "solution": [
@@ -129,9 +174,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675b0b523caf3a6bee2250bc_iStock-175529423.jpg",
     "published": true,
     "kpis": [
-      { "value": "+70-80%", "label": "de taux de conversion dans les magasins pilotes" },
-      { "value": "350", "label": "magasins ciblés pour le déploiement européen sur 12 mois" },
-      { "value": "4 à 6", "label": "nouveaux pays activés pour la prise de rendez-vous en ligne" }
+      {
+        "value": "+70-80%",
+        "label": "de taux de conversion dans les magasins pilotes"
+      },
+      {
+        "value": "350",
+        "label": "magasins ciblés pour le déploiement européen sur 12 mois"
+      },
+      {
+        "value": "4 à 6",
+        "label": "nouveaux pays activés pour la prise de rendez-vous en ligne"
+      }
     ],
     "challenge": "Face à une concurrence accrue et des attentes clients en constante évolution, ce géant mondial des cosmétiques a décidé de transformer l'expérience en magasin en intégrant des services digitaux innovants pour personnaliser l'accompagnement beauté et moderniser la prise de rendez-vous.",
     "solution": [
@@ -154,9 +208,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be241fc3c8ebd83c2301a_iStock-155598132.jpg",
     "published": true,
     "kpis": [
-      { "value": "+60-70%", "label": "d'augmentation des abonnés numériques annuellement" },
-      { "value": "+10-12 pts", "label": "d'amélioration du taux de conversion paiement vers confirmation" },
-      { "value": "70-95%", "label": "de réduction du churn via des mécanismes personnalisés" }
+      {
+        "value": "+60-70%",
+        "label": "d'augmentation des abonnés numériques annuellement"
+      },
+      {
+        "value": "+10-12 pts",
+        "label": "d'amélioration du taux de conversion paiement vers confirmation"
+      },
+      {
+        "value": "70-95%",
+        "label": "de réduction du churn via des mécanismes personnalisés"
+      }
     ],
     "challenge": "Un grand média français devait moderniser sa stratégie d'abonnement numérique face à l'évolution des comportements de consommation. Trois objectifs principaux : accélérer l'acquisition d'abonnés pour atteindre 100 000 en 2023, diviser par deux le churn (de 20% à 10%), et diversifier les sources de revenus grâce à des offres variées.",
     "solution": [
@@ -179,9 +242,18 @@
     "image": "https://cdn.prod.website-files.com/64f8703aba9a3b126e920e90/675be0930d1c90e13f2443bc_iStock-1987658400.jpg",
     "published": true,
     "kpis": [
-      { "value": "-40%", "label": "de temps consacré à la préparation des données" },
-      { "value": "-7%", "label": "de réduction moyenne des coûts sur plusieurs catégories de produits" },
-      { "value": "+100%", "label": "de données consolidées, améliorant la précision des analyses" }
+      {
+        "value": "-40%",
+        "label": "de temps consacré à la préparation des données"
+      },
+      {
+        "value": "-7%",
+        "label": "de réduction moyenne des coûts sur plusieurs catégories de produits"
+      },
+      {
+        "value": "+100%",
+        "label": "de données consolidées, améliorant la précision des analyses"
+      }
     ],
     "challenge": "Dans un contexte de forte compétitivité, un leader du secteur retail s'est engagé à transformer sa Data Factory pour maximiser l'efficacité de sa Direction des Achats. Deux défis majeurs freinaient la performance : la dispersion et l'obsolescence des bases de données empêchaient les acheteurs de disposer d'une information fiable en négociation, et l'absence de transversalité entre les domaines métiers limitait l'identification d'opportunités stratégiques.",
     "solution": [

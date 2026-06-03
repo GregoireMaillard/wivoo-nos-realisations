@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { readCases, writeCases, SECTOR_COLORS } from '../../lib/cases';
+import { readCases, writeCases, isRemotePersistence, ConcurrentEditError, SECTOR_COLORS } from '../../lib/cases';
 
 // Handle POST (delete + toggle)
 if (Astro.request.method === 'POST') {
@@ -11,16 +11,25 @@ if (Astro.request.method === 'POST') {
   const slug   = form.get('slug') as string;
   const cases  = readCases();
 
-  if (action === 'delete') {
-    writeCases(cases.filter(c => c.slug !== slug));
-  } else if (action === 'toggle') {
-    const c = cases.find(x => x.slug === slug);
-    if (c) { c.published = !c.published; writeCases(cases); }
+  try {
+    if (action === 'delete') {
+      await writeCases(cases.filter(c => c.slug !== slug));
+    } else if (action === 'toggle') {
+      const c = cases.find(x => x.slug === slug);
+      if (c) { c.published = !c.published; await writeCases(cases); }
+    }
+    return Astro.redirect('/admin?saved=1');
+  } catch (e) {
+    const code = e instanceof ConcurrentEditError ? 'conflict' : '1';
+    return Astro.redirect(`/admin?error=${code}`);
   }
-  return Astro.redirect('/admin');
 }
 
 const cases = readCases();
+const remote = isRemotePersistence();
+const params = Astro.url.searchParams;
+const flashSaved = params.get('saved') === '1';
+const flashError = params.get('error'); // 'conflict' | '1' | null
 ---
 
 <BaseLayout title="Back-office — Wivoo Réalisations">
@@ -46,6 +55,24 @@ const cases = readCases();
   </header>
 
   <main class="max-w-5xl mx-auto px-6 py-8">
+    {flashSaved && (
+      <div class="mb-4 bg-green-50 border border-green-200 text-green-800 text-sm px-4 py-3 rounded-lg">
+        ✓ Enregistré.{' '}
+        {remote
+          ? 'Le site public sera mis à jour dans ~1 minute (régénération automatique). La liste ci-dessous peut afficher l’ancien état le temps de la mise à jour.'
+          : 'Modification appliquée localement.'}
+      </div>
+    )}
+    {flashError === 'conflict' && (
+      <div class="mb-4 bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3 rounded-lg">
+        ⚠ Quelqu’un a modifié les réalisations en même temps que vous. Votre changement n’a pas été enregistré — rechargez la page et réessayez.
+      </div>
+    )}
+    {flashError === '1' && (
+      <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+        ⚠ Une erreur est survenue lors de l’enregistrement. Réessayez dans un instant.
+      </div>
+    )}
     <div class="flex items-center justify-between mb-6">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">Réalisations</h1>

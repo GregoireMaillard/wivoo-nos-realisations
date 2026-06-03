@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { readCases, writeCases } from '../../../lib/cases';
+import { readCases, writeCases, ConcurrentEditError } from '../../../lib/cases';
 import type { Case } from '../../../lib/cases';
 
 const { slug } = Astro.params;
@@ -37,8 +37,14 @@ if (Astro.request.method === 'POST') {
       challenge: (form.get('challenge') as string).trim(),
       solution: (form.get('solution') as string).split('\n').map(s => s.trim()).filter(Boolean),
     };
-    writeCases(cases.map(x => x.slug === slug ? updated : x));
-    return Astro.redirect('/admin');
+    try {
+      await writeCases(cases.map(x => x.slug === slug ? updated : x));
+      return Astro.redirect('/admin?saved=1');
+    } catch (e) {
+      error = e instanceof ConcurrentEditError
+        ? 'Quelqu’un a modifié les réalisations en même temps. Vos changements n’ont pas été enregistrés — rechargez la page et réessayez.'
+        : 'Une erreur est survenue lors de l’enregistrement. Réessayez dans un instant.';
+    }
   }
 }
 ---
