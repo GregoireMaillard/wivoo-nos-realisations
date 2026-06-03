@@ -29,6 +29,37 @@ const cases = readCases().filter(c => c.published !== false);
     }
     .card-cta { transition: gap .15s; }
     .case-card:hover .card-cta { gap: 8px; }
+
+    /* Toggle */
+    .toggle-btn { transition: background .15s, color .15s, box-shadow .15s; }
+    .toggle-btn.active { background: #fff; color: #111827; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+
+    /* List view */
+    #grid.list-view { display: flex; flex-direction: column; gap: 0;
+      background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    #grid.list-view .case-card {
+      display: grid;
+      grid-template-columns: 140px 1fr auto auto;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      border-bottom: 1px solid #f3f4f6;
+      border-radius: 0;
+      box-shadow: none;
+      transform: none;
+      flex-direction: row;
+    }
+    #grid.list-view .case-card:last-child { border-bottom: none; }
+    #grid.list-view .case-card:hover { background: #fafafa; box-shadow: none; transform: none; }
+    #grid.list-view .card-img { aspect-ratio: 16/9 !important; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+    #grid.list-view .card-img img { transform: none !important; }
+    #grid.list-view .case-card:hover .card-img img { transform: none !important; }
+    #grid.list-view .p-4 { padding: 0; flex-direction: row; align-items: center; gap: 16px; display: contents; }
+    #grid.list-view .card-title { -webkit-line-clamp: 2; flex: 1; margin-bottom: 0; }
+    #grid.list-view .border-gray-100 { display: none; }
+    #grid.list-view .text-2xl { font-size: 1.25rem; margin-bottom: 0; min-width: 72px; text-align: center; }
+    #grid.list-view .kpi-label { display: none; }
+    #grid.list-view .card-cta { white-space: nowrap; margin-top: 0; }
   </style>
 
   <Navbar />
@@ -36,7 +67,6 @@ const cases = readCases().filter(c => c.published !== false);
   <!-- Header -->
   <header class="w-full bg-[#f0eeff] pt-16 pb-10">
     <div class="max-w-5xl mx-auto px-6 text-center">
-      <p class="text-sm font-semibold tracking-widest text-[#7c3aed] uppercase mb-3">Portfolio</p>
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Réalisations</h1>
       <p class="text-lg text-gray-500 max-w-xl mx-auto">
         Découvrez comment nous aidons nos clients à créer de la valeur grâce au Product, à l'IA, à la Data et au Design.
@@ -44,9 +74,10 @@ const cases = readCases().filter(c => c.published !== false);
     </div>
   </header>
 
-  <!-- FilterBar -->
+  <!-- FilterBar + Toggle -->
   <div class="w-full bg-[#f0eeff] pb-12">
-    <div class="max-w-5xl mx-auto px-6">
+    <div class="max-w-5xl mx-auto px-6 flex flex-wrap items-center justify-center gap-3">
+      <!-- Filters -->
       <div class="flex flex-wrap gap-2 justify-center" id="filters">
         <button data-filter="all"
           class="filter-btn px-5 py-2 rounded-full text-sm font-medium border-2 transition-all duration-200 cursor-pointer"
@@ -60,6 +91,23 @@ const cases = readCases().filter(c => c.published !== false);
             {s}
           </button>
         ))}
+      </div>
+      <!-- View toggle -->
+      <div class="flex gap-0.5 bg-gray-200 rounded-lg p-1">
+        <button id="btn-grid" class="toggle-btn active w-8 h-8 rounded-md flex items-center justify-center text-gray-500 cursor-pointer" title="Vue grille">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+            <rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/>
+            <rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/>
+          </svg>
+        </button>
+        <button id="btn-list" class="toggle-btn w-8 h-8 rounded-md flex items-center justify-center text-gray-500 cursor-pointer" title="Vue liste">
+          <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <line x1="5" y1="4" x2="14" y2="4"/><line x1="5" y1="8" x2="14" y2="8"/><line x1="5" y1="12" x2="14" y2="12"/>
+            <circle cx="2" cy="4" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="2" cy="8" r="1" fill="currentColor" stroke="none"/>
+            <circle cx="2" cy="12" r="1" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -146,5 +194,25 @@ const cases = readCases().filter(c => c.published !== false);
 
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+  });
+
+  // View toggle
+  const grid = document.getElementById('grid');
+  document.getElementById('btn-grid').addEventListener('click', () => {
+    grid.classList.remove('list-view');
+    document.getElementById('btn-grid').classList.add('active');
+    document.getElementById('btn-list').classList.remove('active');
+    // restore display on filtered cards
+    document.querySelectorAll('.case-card[style*="none"]').forEach(c => {});
+  });
+  document.getElementById('btn-list').addEventListener('click', () => {
+    grid.classList.add('list-view');
+    document.getElementById('btn-list').classList.add('active');
+    document.getElementById('btn-grid').classList.remove('active');
+    // list view uses flex, fix hidden cards
+    document.querySelectorAll('.case-card').forEach(c => {
+      if (c.style.display === 'none') return;
+      c.style.display = '';
+    });
   });
 </script>
