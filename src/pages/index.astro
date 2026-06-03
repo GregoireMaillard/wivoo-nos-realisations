@@ -90,7 +90,7 @@ cases.forEach(c => {
   <Navbar />
 
   <!-- Header -->
-  <header class="w-full bg-[#f0eeff] pt-16 pb-10">
+  <header class="w-full bg-[#f0eeff] pt-16 pb-14">
     <div class="max-w-7xl mx-auto px-6 text-center">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">Nos Réalisations</h1>
       <p class="text-lg text-gray-500 max-w-xl mx-auto">
@@ -99,9 +99,10 @@ cases.forEach(c => {
     </div>
   </header>
 
-  <!-- FilterBar + Toggle -->
-  <div class="w-full bg-[#f0eeff] pb-10">
-    <div class="max-w-7xl mx-auto px-6 flex flex-col gap-2.5">
+  <!-- FilterBar + Toggle — sticky sous la navbar -->
+  <div class="w-full bg-white border-b border-gray-100 sticky top-24 z-40"
+       style="box-shadow: 0 4px 12px rgba(0,0,0,.06);">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-2.5">
 
       <!-- Ligne 1 : Expertise -->
       <div class="flex flex-wrap items-center gap-2">
