@@ -31,11 +31,38 @@ changement effectif. Persisté en `localStorage` (survit au reload du POST), par
 réalisation. **Actif uniquement en prod** (gated sur `data-remote` = `isRemotePersistence()`) ;
 inactif en local où l'écriture est instantanée.
 
+**Upload d'image** (ajout fin de session) : le champ URL a été remplacé par un composant
+`src/components/ImageUpload.astro` (aperçu instantané, validation type + **4 Mo max**,
+l'utilisateur ne manipule aucun chemin). Les images sont stockées dans `public/case-images/`
+et servies à `/case-images/<slug>-xxxx.ext`.
+- `writeCasesWithImage(cases, image)` (`src/lib/cases.ts`) : commit **atomique** de
+  `cases.json` + l'image dans un **seul** commit via l'**API Git Data** (blob → tree →
+  commit → update ref, avec retry 422 → `ConcurrentEditError`). En local : écriture directe
+  dans `public/case-images/`.
+- Création (`new.astro`) : image obligatoire. Édition (`edit/[slug].astro`) : image
+  optionnelle, conserve l'actuelle si aucun fichier fourni.
+- Helpers : `validateImageFile()`, `buildImageUpload()`, `imageExtension()`, `MAX_IMAGE_BYTES`.
+- Formulaires passés en `enctype="multipart/form-data"`.
+- **Testé de bout en bout** en local ET en prod (commit atomique validé, cas de test nettoyé).
+- `writeCases()` (API Contents) reste utilisé pour publier/dépublier/supprimer (sans image).
+
 **Variables d'env Vercel** : `GITHUB_TOKEN`, `GITHUB_REPO`
 (`GregoireMaillard/wivoo-nos-realisations`), `GITHUB_BRANCH` (`main`).
 
 ⚠️ **Pas encore d'authentification sur `/admin`** (assumé pour la démo) — à sécuriser
 avant toute exposition réelle. Cf. `docs/back-office.md`.
+
+### Documentation (ajout fin de session)
+- `docs/documentation-projet.md` — **doc de présentation/pitch** : contexte, avant/après,
+  fil de démo, schémas ASCII (archi fonctionnelle + technique), choix UX (décision→bénéfice),
+  choix techniques, **lecture Product (PM)** (JTBD, indicateurs à instrumenter, périmètre MVP,
+  hypothèses, arbitrages), limites + roadmap priorisée.
+- `docs/script-demo.md` — **script de prise de parole** ~2 min 30, minuté, avec indications
+  de manipulation et garde-fous.
+- `docs/back-office.md` — note d'exploitation (token, env vars, sécurité, décision
+  commit-par-sauvegarde + seuil de bascule).
+
+**Données** : 9 réalisations (les 8 d'origine + « superproductivite-des-equipes-grace-a-l-ia-et-automatisations », créée via l'upload). 1 image dans `public/case-images/`.
 
 ---
 
@@ -47,11 +74,16 @@ avant toute exposition réelle. Cf. `docs/back-office.md`.
 - `src/pages/admin/edit/[slug].astro` — formulaire d'édition d'une étude de cas
 - `src/components/Navbar.astro` — navbar sticky z-50 avec dropdowns au hover (liens wivoo.fr réels)
 - `src/components/Footer.astro`
+- `src/components/ImageUpload.astro` — composant d'upload d'image (aperçu, validation 4 Mo)
 - `src/layouts/BaseLayout.astro` — favicon Wivoo, fond gris global
-- `src/data/cases.json` — source de données des 8 études de cas
-- `src/lib/cases.ts` — helpers TypeScript pour accéder aux données
+- `src/data/cases.json` — source de vérité (9 réalisations)
+- `src/lib/cases.ts` — helpers données + persistance (Contents API, Git Data API) + upload
+- `public/case-images/` — images uploadées via le back-office
 - `src/styles/global.css`
 - `CLAUDE.md` — règles, contexte projet et persona UX expert (à jour)
+- `docs/documentation-projet.md` — doc de présentation/pitch (UX + Product + technique)
+- `docs/script-demo.md` — script de prise de parole (~2 min 30)
+- `docs/back-office.md` — note d'exploitation
 - `docs/plan.md` — plan d'implémentation
 
 ### Structure des fichiers
@@ -171,7 +203,9 @@ PrototypeChallengeShowcase_V3/
 - Navigation entre cas (précédent / suivant) sur les pages détail
 - Mode sombre
 - SEO : og:image et meta description par cas
-- **Back-office : authentification** (actuellement `/admin` est OUVERT — à sécuriser avant toute exposition réelle, cf. `docs/back-office.md`)
+- **Back-office : authentification** (actuellement `/admin` est OUVERT — à sécuriser avant toute exposition réelle, cf. `docs/back-office.md`) — **priorité 1**
+- **Images orphelines** : remplacer une image en édition ne supprime pas l'ancienne de `public/case-images/` (à nettoyer côté `writeCasesWithImage`)
+- Optimisation des images à l'upload (redimensionnement / compression)
 - Back-office phase 2 : encart d'aide permanent dans l'admin (reporté à la demande)
 - Hero : ajouter une accroche différenciante (preuve sociale, chiffre agrégé)
 - Point 5 audit UX non traité : supprimer le `<hr>` dans les cards (bruit visuel)
