@@ -1,40 +1,89 @@
-# Documentation projet — « Nos Réalisations » Wivoo
+# « Nos Réalisations » Wivoo — Présentation du prototype
 
-> Prototype de refonte de la section *Réussite client* du site wivoo.fr.
-> Document de présentation : contexte, choix fonctionnels / techniques / UX, état, et pistes d'évolution.
+> **En une phrase** — Une refonte de la page « cas clients » de wivoo.fr qui transforme une simple galerie d'images en **vitrine orientée conversion**, doublée d'un **back-office autonome** permettant aux commerciaux d'alimenter la page sans développeur.
 
-**En ligne :** https://wivoo-nos-realisations.vercel.app/
-**Back-office :** https://wivoo-nos-realisations.vercel.app/admin
+**🔗 Démo :** https://wivoo-nos-realisations.vercel.app/ · **Back-office :** …/admin
 
 ---
 
-## 1. Résumé exécutif
+## En bref (pour décideur — 30 s)
 
-Ce prototype reprend et améliore la page [« Nos cas clients »](https://www.wivoo.fr/our-case-studies) de wivoo.fr. Il poursuit deux objectifs :
+**Le problème.** La page actuelle de wivoo.fr aligne 8 cas clients (image + titre), sans filtre, sans résultat visible, sans détail. Elle informe, mais ne **convertit** pas et n'est pas **maintenable** par les équipes métier.
 
-1. **Valoriser les 4 expertises cœur de Wivoo** (Product, IA, Data, Design) et les résultats clients, pour servir la conversion de prospects B2B vers « Prendre RDV ».
-2. **Rendre la page autonome pour les équipes commerciales** : un back-office permet d'ajouter / modifier / publier une réalisation **sans toucher au code**.
+**La réponse.** Un prototype qui :
+- **valorise les expertises Wivoo** (Product, IA, Data, Design) et **les résultats chiffrés**, pour convertir des prospects B2B vers « Prendre RDV » ;
+- **rend la page autonome** : les commerciaux ajoutent / modifient / publient une réalisation depuis un back-office, **sans toucher au code**, image comprise.
 
-Ce qui a été livré, par rapport à la page d'origine (grille de 8 cartes, sans filtre ni description) :
-- une **page vitrine enrichie** : filtres par expertise et par secteur, vues grille/liste, cartes avec résultat chiffré, pages de détail complètes ;
-- un **back-office fonctionnel** avec upload d'image, publication/dépublication et persistance automatique en production.
+**Là où on en est.** Vitrine + back-office **en ligne et fonctionnels**, déploiement automatique. Une limite assumée (pas encore d'authentification du back-office) et une feuille de route claire pour la suite.
 
 ---
 
-## 2. Contexte & objectifs
+## Avant / Après
+
+| | Page actuelle wivoo.fr | Prototype |
+|---|---|---|
+| Présentation | Grille d'images + titre | Cartes avec **expertise, secteur, résultat chiffré** |
+| Filtrage | Aucun | **Par expertise et par secteur** (combinables) |
+| Lecture des résultats | Absente | **KPI mis en avant** dès la carte |
+| Détail d'un cas | — | **Page dédiée** (résultats, défi, solution, CTA) |
+| Vues | Une seule | **Grille ou liste** au choix |
+| Mise à jour du contenu | Par un développeur | **Par les commerciaux**, en autonomie |
+
+---
+
+## Fil conducteur de démo suggéré
+
+1. **Le site public** — montrer le filtrage par expertise (couleurs Wivoo) puis par secteur, basculer grille/liste, ouvrir une page de cas (résultats → défi → solution → CTA).
+2. **Le back-office** — créer une réalisation, **uploader une image** (sans manipuler d'URL), publier ; montrer qu'elle apparaît sur le site.
+3. **Le propos** — ce prototype sert deux objectifs : *convertir* (côté vitrine) et *rendre l'équipe autonome* (côté back-office).
+
+---
+
+## Contexte & objectifs
 
 | | |
 |---|---|
 | **Référence** | wivoo.fr/our-case-studies — grille 2 colonnes, 8 cas, sans filtre ni description |
 | **Inspirations** | wefiit.com/cas-clients, thiga.co/fr/cas-client, ustwo.com/work |
 | **Cible** | Prospects B2B, décideurs, DSI — lecture rapide, **desktop-first**, objectif conversion |
-| **Contrainte** | Respecter la charte Wivoo et représenter les 8 cas existants |
+| **Contrainte** | Respecter la charte Wivoo et représenter les cas existants |
 
 ---
 
-## 3. Schéma — Architecture **fonctionnelle**
+## Lecture Product (regard PM senior)
 
-Deux parcours indépendants : le visiteur (site public) et le commercial (back-office).
+> *Ce que ce prototype cherche à prouver, pour qui, et comment on saurait que ça marche.*
+
+### Utilisateurs & besoins (jobs-to-be-done)
+- **Prospect B2B / décideur (DSI, direction métier)** — *« Quand j'évalue un cabinet, je veux voir vite des preuves concrètes pertinentes pour mon secteur, pour décider de prendre RDV. »*
+- **Commercial Wivoo** — *« Quand une mission se termine, je veux publier la réalisation moi-même, rapidement et sans dépendre d'un développeur, pour garder la vitrine à jour et nourrir mes RDV. »*
+- **Marketing (implicite)** — cohérence de marque et de charte.
+
+### Objectifs & indicateurs de succès (à instrumenter)
+- **North star** : taux de conversion vers « Prendre RDV » depuis la section réalisations.
+- **Côté vitrine** : clic carte → détail, usage des filtres, clic CTA, profondeur de scroll, rebond.
+- **Côté back-office (efficacité opérationnelle)** : délai « mission terminée → cas publié », nombre de cas publiés / mois, **part de publications faites sans développeur** (cible : 100 %).
+- ⚠️ **Aucune analytique branchée à ce jour** — ces indicateurs sont **à instrumenter** (roadmap P3). C'est un prototype : pas de résultats chiffrés à présenter, mais un cadre de mesure prêt à l'emploi.
+
+### Périmètre MVP & hors-périmètre (discipline produit)
+- **Dans le périmètre** : filtrage, vues grille/liste, pages détail, back-office CRUD + upload + publication.
+- **Hors-périmètre assumé** (pour livrer vite la preuve de valeur) : authentification, optimisation d'image, SEO par cas, analytics, i18n, tests automatisés → tous **priorisés** dans la roadmap.
+- **Logique** : livrer d'abord la valeur démontrable (vitrine qui convertit + autonomie des commerciaux), repousser ce qui ne bloque pas la démonstration.
+
+### Hypothèses à valider
+- **H1 — valeur visiteur** : exposer expertises + résultats chiffrés + filtres augmente la conversion vers RDV → à valider par analytics / A/B test.
+- **H2 — adoption interne** : si la friction est faible (upload sans technique), les commerciaux maintiendront la page eux-mêmes → à valider par l'usage réel et leur retour.
+- **H3 — fréquence d'édition** : « quelques fois / mois » → l'architecture statique + commit suffit. Si infirmée, bascule prévue (branche de contenu ou base de données).
+
+### Arbitrages clés (build vs buy)
+- **Source de vérité** : solution **sur-mesure** (JSON + Git) plutôt que Notion ou un CMS tiers → maîtrise totale et zéro outil externe, au prix de porter l'interface nous-mêmes. Assumé pour un prototype.
+- **Persistance** : **commit Git** plutôt qu'une base de données → simplicité + versioning, au prix d'un commit par sauvegarde (seuil de bascule documenté dans `back-office.md`).
+
+---
+
+## Architecture **fonctionnelle**
+
+> *À lire ainsi :* deux usages distincts — le **prospect** qui consulte (site public), le **commercial** qui alimente (back-office).
 
 ```
 ┌───────────────────────── VISITEUR (prospect B2B) ──────────────────────────┐
@@ -69,9 +118,9 @@ Deux parcours indépendants : le visiteur (site public) et le commercial (back-o
 
 ---
 
-## 4. Schéma — Architecture **technique**
+## Architecture **technique**
 
-La donnée vit dans le dépôt GitHub. Le site public est **statique** ; le back-office est **rendu à la demande** (SSR) et écrit dans le dépôt, ce qui déclenche un redéploiement.
+> *À lire ainsi :* la donnée vit dans GitHub. Le site public est **statique** (rapide, peu coûteux) ; le back-office **écrit dans GitHub**, ce qui régénère le site automatiquement.
 
 ```
                        SOURCE DE VÉRITÉ  (dépôt GitHub)
@@ -84,179 +133,115 @@ La donnée vit dans le dépôt GitHub. Le site public est **statique** ; le back
        via API      │                                   ▼
   ┌─────────────────┴────────────┐         ┌──────────────────────────────┐
   │  BACK-OFFICE  /admin         │         │   BUILD VERCEL  (à chaque push)│
-  │  SSR (prerender = false)     │         │   Astro génère le site         │
-  │                              │         │   statique (prerender = true)  │
-  │  • writeCasesWithImage()     │         └───────────────┬──────────────┘
-  │      commit ATOMIQUE         │                         │ (5) déploie
-  │      (image + données)       │                         ▼
-  │      via API Git Data        │         ┌──────────────────────────────┐
-  │  • writeCases()              │         │   SITE PUBLIC  (statique)      │
-  │      publier / supprimer     │         │   /   et   /case-studies/:slug │
-  │  • readCasesLive()           │         └───────────────┬──────────────┘
-  │      lit l'état à jour GitHub │                         │
-  └──────────────┬───────────────┘                         │
-                 ▲                                          ▼
-                 │ édite                            consulte │
-          ┌──────┴───────┐                          ┌────────┴─────┐
-          │  Commercial  │                          │  Prospect    │
-          └──────────────┘                          └──────────────┘
+  │  SSR (rendu à la demande)    │         │   Astro génère le site         │
+  │                              │         │   statique                     │
+  │  • commit ATOMIQUE           │         └───────────────┬──────────────┘
+  │    (image + données)         │                         │ (5) déploie
+  │  • publier / supprimer       │                         ▼
+  │  • lit l'état à jour GitHub  │         ┌──────────────────────────────┐
+  └──────────────┬───────────────┘         │   SITE PUBLIC  (statique)      │
+                 ▲                          │   /   et   /case-studies/:slug │
+                 │ édite                    └───────────────┬──────────────┘
+          ┌──────┴───────┐                          consulte │
+          │  Commercial  │                          ┌────────┴─────┐
+          └──────────────┘                          │  Prospect    │
+                                                     └──────────────┘
 
-  Délai (1) → (5) ≈ 1 minute (régénération).
-  En LOCAL (npm run dev) : écriture directe des fichiers, pas de commit, instantané.
+  Délai (1) → (5) ≈ 1 minute (régénération automatique).
+  En local : écriture directe des fichiers, instantané.
 ```
 
-**Pourquoi ce design ?** Sur Vercel, le système de fichiers des fonctions serverless est en lecture seule. On ne peut donc pas « enregistrer dans un dossier » au runtime : la persistance passe par un **commit Git**, qui a l'avantage de **versionner** données et images gratuitement.
+**Le choix structurant en clair :** sur Vercel, on ne peut pas « enregistrer dans un dossier » au moment où le commercial clique (système de fichiers en lecture seule). La sauvegarde passe donc par un **commit Git** — ce qui a un double avantage : ça déclenche la mise en ligne **et** ça **archive chaque version** du contenu (historique, retour arrière possibles).
 
 ---
 
-## 5. Périmètre fonctionnel
+## Périmètre fonctionnel
 
-### Site public
-- **Filtres double rangée** — *Expertise* (Product/AI/Data/Design) et *Secteur* (BTP, Banque, Retail…), combinés en **logique ET**, avec compteur de résultats et **état vide** (« Aucune réalisation… » + bouton de réinitialisation).
-- **Deux vues** — grille (3 colonnes) et liste, au choix de l'utilisateur.
-- **Cartes** — image, badge d'expertise coloré, badge de secteur, titre, **1er KPI mis en avant**, lien « Voir le cas ».
-- **Pages de détail** — hero, 3 KPIs encadrés, le défi, la solution (étapes), CTA « Prendre RDV ».
-- **Navbar / Footer** — repris de wivoo.fr (logo, menus déroulants vers les vraies pages, CTA), footer charté.
+**Site public**
+- **Filtres double rangée** — Expertise (Product/AI/Data/Design) et Secteur, combinés en **logique ET**, avec compteur et **état vide** (message + bouton réinitialiser).
+- **Deux vues** — grille (3 colonnes) ou liste.
+- **Cartes** — image, badge expertise coloré, badge secteur, titre, **résultat chiffré mis en avant**, lien « Voir le cas ».
+- **Pages de détail** — hero, 3 KPIs, le défi, la solution, CTA « Prendre RDV ».
+- **Navbar / Footer** chartés, repris de wivoo.fr.
 
-### Back-office (`/admin`)
-- **Lister** les réalisations (statut publié / brouillon).
-- **Créer / Modifier / Supprimer** une réalisation.
-- **Publier / Dépublier** (un brouillon n'apparaît pas sur le site public).
-- **Uploader une image** (composant dédié, validation 4 Mo, aperçu instantané).
-- **Feedback** : confirmation, gestion des conflits d'édition concurrente, cooldown après publication.
+**Back-office (`/admin`)**
+- Lister, **créer / modifier / supprimer**, **publier / dépublier**, **uploader une image** (composant dédié, 4 Mo, aperçu), avec retours de confirmation et gestion des conflits.
 
 ---
 
-## 6. Choix UX/UI (justifiés)
+## Choix UX/UI — décision → bénéfice
 
-| Décision | Justification (principe) |
-|---|---|
-| **Filtres séparés en 2 rangées**, Expertise en **couleur**, Secteur en **gris** | Hiérarchie visuelle : la couleur est réservée au **différenciant de Wivoo** (les expertises). Le secteur, secondaire, reste neutre pour ne pas rivaliser. |
-| **Logique ET + état vide + bouton reset** | Prévention des impasses : une combinaison sans résultat propose une sortie claire (Nielsen — *error prevention* + *recovery*). |
-| **Barre de filtres sticky** sous la navbar | Accès permanent au filtrage pendant le scroll (*recognition over recall*). |
-| **Bascule grille / liste** | Liberté de l'utilisateur ; la vue liste favorise le **scan rapide** typique des décideurs. |
-| **KPI chiffré mis en avant sur la carte** | Message orienté **résultat** d'emblée : preuve de valeur avant la description (lecture en < 5 s, cible B2B). |
-| **Titre tronqué à 3 lignes** | Régularité de la grille, charge cognitive maîtrisée. |
-| **Page détail : résultats AVANT le défi/solution** | Narration *outcome-first* adaptée aux décideurs. |
-| **CTA « Prendre RDV » vert vif, récurrent** | Contraste fort, cible cliquable large (loi de Fitts), au service de la conversion. |
-| **Bandeaux de feedback + cooldown dans l'admin** | *Visibility of system status* (Nielsen #1) : l'utilisateur comprend que sa modification est prise en compte et quand elle sera visible. |
-| **Upload d'image sans manipulation de chemin** | *Match between system and real world* : un commercial dépose un fichier, il ne gère pas d'URL ni de path. Réduction de la friction. |
-| **Desktop-first** | Cible DSI / décideurs, contexte de consultation principalement desktop. |
-
-### Charte (référence)
-| Usage | Couleur |
-|---|---|
-| Product | `#6d28d9` (violet) |
-| IA | `#0891b2` (cyan) |
-| Data | `#059669` (vert) |
-| Design | `#db2777` (rose) |
-| Hero | `#f0eeff` |
-| Fond page | `#f9fafb` |
-| Footer | `#160b52` |
-| CTA | `#5BDF6A` |
-
----
-
-## 7. Choix techniques (justifiés)
-
-| Décision | Justification |
-|---|---|
-| **Astro** (framework) | Site **statique par défaut** → performances (chargement rapide, bon SEO), coût d'hébergement faible, simplicité. Rendu à la demande (SSR) **uniquement** pour le back-office, là où c'est nécessaire. |
-| **Tailwind CSS v4** | Stylage rapide et cohérent, charte appliquée directement dans le markup. |
-| **JS « vanilla »** pour les filtres | Pas de framework front lourd : interactions simples, JavaScript minimal envoyé au visiteur. |
-| **Données en JSON versionné** (`cases.json`) | Pas d'infrastructure de base de données ; contenu **historisé** dans Git. Choix dimensionné sur une fréquence d'édition faible. |
-| **Persistance par commit Git** (back-office) | Imposée par le filesystem en lecture seule de Vercel. Le commit déclenche le redéploiement et **versionne** chaque modification. |
-| **Commit atomique via l'API Git Data** (création/édition avec image) | Image **et** données dans **un seul commit** → pas d'état intermédiaire incohérent, un seul rebuild. |
-| **`readCasesLive()`** dans l'admin | Lit l'état à jour depuis GitHub plutôt que le bundle déployé → l'admin reflète immédiatement les changements sans attendre le rebuild. |
-| **Déploiement Vercel sur push** | Chaîne d'intégration simple : `git push` → build → mise en ligne automatique. |
-
-### Sécurité (état actuel)
-- **Protection CSRF** active (Astro `checkOrigin`) sur les écrans d'administration.
-- Le **token GitHub** reste côté serveur (variables d'environnement Vercel), jamais exposé au navigateur.
-- ⚠️ **Pas d'authentification** sur `/admin` à ce stade — voir limites (§9).
-
----
-
-## 8. Arborescence du projet
-
-```
-src/
-├── pages/
-│   ├── index.astro              Page vitrine (filtres, grille/liste)        [statique]
-│   ├── case-studies/[slug].astro Page détail d'une réalisation              [statique]
-│   └── admin/
-│       ├── index.astro          Liste + publier/supprimer + cooldown        [SSR]
-│       ├── new.astro            Création (upload image requis)              [SSR]
-│       └── edit/[slug].astro    Édition (upload image optionnel)            [SSR]
-├── components/
-│   ├── Navbar.astro             Navbar charte Wivoo (menus, CTA)
-│   ├── Footer.astro             Footer charte Wivoo
-│   └── ImageUpload.astro        Composant d'upload réutilisable (4 Mo, aperçu)
-├── layouts/
-│   └── BaseLayout.astro         Squelette HTML, favicon, fond global
-├── lib/
-│   └── cases.ts                 Lecture/écriture données, upload, couleurs
-├── data/
-│   └── cases.json               SOURCE DE VÉRITÉ des réalisations
-└── styles/
-    └── global.css               Import Tailwind
-public/
-└── case-images/                 Images uploadées via le back-office
-docs/
-├── documentation-projet.md      Ce document
-├── back-office.md               Note d'exploitation (env vars, token, sécurité)
-└── reprise-session.md           Journal de reprise de session
-```
-
----
-
-## 9. État actuel & limites connues (transparence)
-
-### Ce qui fonctionne et est en ligne
-- Site vitrine complet (filtres, vues, détail) + 9 réalisations.
-- Back-office opérationnel en production : CRUD, publication, **upload d'image** (testé de bout en bout, commit atomique validé).
-- Déploiement automatique Vercel.
-
-### Limites assumées / dette technique
-| Sujet | Détail | Criticité |
+| Décision | Bénéfice | Principe |
 |---|---|---|
-| **Authentification** | `/admin` est ouvert sans login (choix assumé pour la démo). | 🔴 À traiter avant toute exposition réelle |
-| **Commit par sauvegarde** | Chaque modification = 1 commit `chore(admin)`. Acceptable à faible fréquence ; seuil de bascule documenté dans `back-office.md`. | 🟡 |
-| **Images orphelines** | Remplacer une image en édition ne supprime pas l'ancienne du dépôt. | 🟡 |
-| **Images non optimisées** | Les images uploadées sont servies telles quelles (seule limite : 4 Mo). | 🟡 |
-| **Secteur déduit du sous-titre** | L'industrie est extraite de la chaîne `… — Secteur` ; convention fragile. | 🟡 |
-| **SEO par cas** | Pas de `og:image` ni meta description spécifiques par réalisation. | 🟡 |
-| **Tests automatisés** | Playwright est présent mais aucune suite de tests n'est versionnée. | 🟡 |
-| **Hygiène dépôt** | Pas de `.gitignore` (dist/, node_modules suivis comme non trackés). | 🟢 |
+| Expertise **en couleur**, Secteur **en gris** | Le prospect identifie d'emblée le **positionnement Wivoo** ; le secteur reste un filtre secondaire | Hiérarchie visuelle |
+| **Logique ET + état vide + reset** | Aucune impasse : une recherche sans résultat propose une sortie | Prévention/​récupération d'erreur (Nielsen) |
+| **Résultat chiffré sur la carte** | Preuve de valeur **immédiate**, avant même la description | *Outcome-first*, lecture < 5 s |
+| **Barre de filtres sticky** | Filtrage accessible en permanence pendant le scroll | *Recognition over recall* |
+| **Bascule grille / liste** | S'adapte au mode de lecture du décideur (scan rapide) | Liberté de l'utilisateur |
+| **Détail : résultats avant défi/solution** | Récit orienté impact, adapté aux décideurs | *Outcome-first* |
+| **CTA « Prendre RDV » vert récurrent** | Action de conversion toujours visible et facile à atteindre | Loi de Fitts |
+| **Feedback + cooldown dans l'admin** | Le commercial sait que sa modif est prise en compte et quand elle sera visible | *Visibility of system status* (Nielsen #1) |
+| **Upload sans manipulation de chemin** | Un commercial dépose un fichier — aucune notion technique d'URL/path | *Match system / monde réel* |
+| **Desktop-first** | Cohérent avec la consultation DSI/décideurs | Adéquation au contexte d'usage |
+
+**Charte couleurs :** Product `#6d28d9` · IA `#0891b2` · Data `#059669` · Design `#db2777` · Hero `#f0eeff` · Fond `#f9fafb` · Footer `#160b52` · CTA `#5BDF6A`.
 
 ---
 
-## 10. Roadmap — améliorations possibles (si le projet continue)
+## Choix techniques — décision → bénéfice
 
-Priorisé du plus structurant au plus secondaire.
+| Décision | Bénéfice |
+|---|---|
+| **Astro, site statique par défaut** | Pages publiques **rapides** et **bien référencées**, hébergement **peu coûteux** |
+| **Rendu à la demande (SSR) uniquement pour l'admin** | Du dynamique seulement là où c'est utile, sans alourdir la vitrine |
+| **Données en JSON versionné** | Pas de base de données à gérer ; **contenu historisé** dans Git |
+| **Persistance par commit Git** | Sauvegarde + mise en ligne + **archivage** en une seule mécanique |
+| **Commit atomique (image + données)** | Pas d'état incohérent, **une seule mise à jour** par sauvegarde |
+| **Lecture « live » dans l'admin** | Le back-office reflète les changements **immédiatement**, sans attendre la régénération |
+| **Déploiement automatique Vercel** | `git push` → mise en ligne, sans intervention manuelle |
 
-### Priorité 1 — fiabiliser
-- **Authentification du back-office** : middleware Astro + mot de passe partagé, ou SSO Wivoo.
-- **Suppression de l'ancienne image** lors d'un remplacement (éviter les orphelins).
-
-### Priorité 2 — valoriser & convertir
-- **SEO par réalisation** : `og:image`, meta description, données structurées, sitemap.
-- **Optimisation des images** à l'upload (redimensionnement / compression, ou pipeline d'images).
-- **Page détail enrichie** : témoignage client, navigation précédent/suivant entre cas.
-- **Animations d'apparition** des cartes au scroll.
-
-### Priorité 3 — passer à l'échelle / mesurer
-- **Faire évoluer la persistance** si la fréquence d'édition augmente (branche de contenu dédiée, ou base de données + revalidation) — décision et seuil documentés dans `back-office.md`.
-- **Analytics** : suivi de l'usage des filtres et du taux de clic sur les CTA ; A/B test du CTA.
-- **Internationalisation** (version anglaise), mode sombre.
-- **Suite de tests** end-to-end (Playwright) pour sécuriser les évolutions.
+**Sécurité (état actuel) :** protection anti-CSRF active sur l'admin ; le jeton GitHub reste **côté serveur** (jamais exposé). ⚠️ Authentification du back-office **non encore en place** — voir limites.
 
 ---
 
-## 11. Stack & informations utiles
+## État actuel & limites assumées
 
-- **Framework** : Astro 6.4.1 · **CSS** : Tailwind v4 · **Adaptateur** : @astrojs/vercel · **Node** ≥ 22.12
-- **Dépôt** : `GregoireMaillard/wivoo-nos-realisations` (branche `main`)
-- **Déploiement** : Vercel, automatique à chaque push sur `main`
-- **Lancer en local** : `npm run dev` → http://localhost:4321
-- **Documents liés** : `docs/back-office.md` (exploitation), `docs/reprise-session.md` (journal)
+**En ligne et fonctionnel :** vitrine complète + back-office opérationnel en production (création, édition, publication, **upload d'image validé de bout en bout**), déploiement automatique.
+
+| Limite | Détail | Criticité |
+|---|---|---|
+| **Authentification** | `/admin` ouvert sans login (assumé pour la démo) | 🔴 à traiter avant exposition réelle |
+| **Un commit par sauvegarde** | Acceptable à faible fréquence ; seuil de bascule documenté | 🟡 |
+| **Images orphelines** | Remplacer une image ne supprime pas l'ancienne | 🟡 |
+| **Images non optimisées** | Servies telles quelles (limite 4 Mo) | 🟡 |
+| **Secteur déduit du sous-titre** | Convention de saisie un peu fragile | 🟡 |
+| **SEO par cas / tests automatisés** | Non encore en place | 🟡 |
+
+---
+
+## Roadmap — si le projet continue (priorisé)
+
+> Priorisé par **impact × effort** : P1 = ce qui débloque un usage réel, P2 = ce qui sert la conversion, P3 = ce qui fait passer à l'échelle et permet de mesurer.
+
+**Priorité 1 — fiabiliser**
+- Authentification du back-office (mot de passe partagé ou SSO Wivoo).
+- Suppression de l'ancienne image lors d'un remplacement.
+
+**Priorité 2 — valoriser & convertir**
+- SEO par réalisation (`og:image`, méta, données structurées, sitemap).
+- Optimisation des images à l'upload.
+- Page détail enrichie (témoignage client, navigation entre cas), animations au scroll.
+
+**Priorité 3 — passer à l'échelle & mesurer**
+- Faire évoluer la persistance si les éditions deviennent fréquentes (branche de contenu ou base de données).
+- Analytics (usage des filtres, taux de clic CTA), A/B test du CTA.
+- Version anglaise, mode sombre, suite de tests end-to-end.
+
+---
+
+## Annexe — stack & infos
+
+- **Astro 6.4** · **Tailwind v4** · **Vercel** · **Node ≥ 22.12**
+- Dépôt `GregoireMaillard/wivoo-nos-realisations` (branche `main`), déploiement automatique à chaque push
+- Lancer en local : `npm run dev` → http://localhost:4321
+- Documents liés : `back-office.md` (exploitation : jeton, variables, sécurité, décision commit-par-sauvegarde), `reprise-session.md` (journal)
