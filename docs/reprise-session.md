@@ -9,13 +9,14 @@ Un back-office d'administration a été ajouté.
 ---
 
 ### Ce qui est terminé
-- `src/pages/index.astro` — page principale avec grille 8 cartes et filtres par secteur
+- `src/pages/index.astro` — page principale avec grille 3 colonnes, filtres par secteur, hero violet clair, fond gris
 - `src/pages/case-studies/[slug].astro` — pages détail dynamiques (route unique pour les 8 cas)
 - `src/pages/admin/index.astro` — liste des études de cas (back-office)
 - `src/pages/admin/new.astro` — formulaire de création d'une nouvelle étude de cas
 - `src/pages/admin/edit/[slug].astro` — formulaire d'édition d'une étude de cas
-- `src/components/Navbar.astro` + `src/components/Footer.astro`
-- `src/layouts/BaseLayout.astro`
+- `src/components/Navbar.astro` — navbar sticky avec dropdowns au hover (liens wivoo.fr réels)
+- `src/components/Footer.astro`
+- `src/layouts/BaseLayout.astro` — favicon Wivoo, fond gris global
 - `src/data/cases.json` — source de données des 8 études de cas
 - `src/lib/cases.ts` — helpers TypeScript pour accéder aux données
 - `src/styles/global.css`
@@ -59,55 +60,55 @@ PrototypeChallengeShowcase_V3/
 ```
 
 ### Les 8 études de cas
-| Slug | Secteur |
-|------|---------|
-| `optimisation-scores-predictifs` | Data |
-| `service-client-btp` | Product |
-| `ecommerce-pharma` | Product |
-| `chatbot-genai-banque` | AI |
-| `engagement-retail-sportif` | Design |
-| `experience-beaute-cosmetiques` | Design |
-| `abonnements-media-francais` | Data |
-| `gestion-donnees-retail` | Data |
+| Slug | Secteur | Industrie |
+|------|---------|-----------|
+| `optimisation-scores-predictifs` | Data | Retail |
+| `service-client-btp` | Product | BTP |
+| `ecommerce-pharma` | Product | Pharma / Santé |
+| `chatbot-genai-banque` | AI | Banques & Assurances |
+| `engagement-retail-sportif` | Design | Retail |
+| `experience-beaute-cosmetiques` | Design | Cosmétique |
+| `abonnements-media-francais` | Data | Médias |
+| `gestion-donnees-retail` | Data | Retail |
 
 ---
 
 ### Git — état local
 - Branche : `main`
-- 4 commits effectués, tout est commité
-- Remote GitHub configuré (HTTPS) : `https://github.com/GregoireMaillard/wivoo-nos-realisations.git`
-- **Push non effectué** — authentification GitHub HTTPS bloquée (même problème que V2)
+- 13 commits effectués, tout est commité et pushé
+- Remote GitHub (SSH) : `git@github.com:GregoireMaillard/wivoo-nos-realisations.git`
+- **Push OK** — remote passé en SSH lors de la session du 03/06/2026
 
 ### Déploiement
-- `.vercel/output/` présent localement (build Vercel effectué via CLI)
-- Statut du déploiement Vercel en ligne : **à vérifier**
+- **Vercel** : https://wivoo-nos-realisations.vercel.app/ — **en ligne et à jour**
+- Déploiement automatique à chaque push sur `main` via l'intégration GitHub
 
 ---
 
-## Ce qu'il reste à faire
+## Améliorations réalisées lors de la session du 03/06/2026
 
-### 1. Configurer l'authentification SSH pour GitHub (si non fait)
-```bash
-# Vérifier si une clé existe déjà
-ls ~/.ssh/
+| Commit | Description |
+|--------|-------------|
+| `22afa6f` | Navbar avec dropdowns au hover et liens wivoo.fr réels |
+| `d6bb313` | Description des cards toujours visible (suppression du hover-only) |
+| `05b6910` | Fix filtres par secteur (bug ES module scope) |
+| `2ff3710` | Favicon Wivoo officiel dans l'onglet navigateur |
+| `db76cc5` | cursor-pointer sur tous les éléments interactifs |
+| `8b1b444` | Fond violet clair `#f0eeff` sur le hero et les filtres |
+| `d32b4e1` | Grille 3 colonnes + espacement hero/cards amélioré |
+| `3aa3e19` | Refonte cards : design split image/contenu + KPI + badges industrie |
+| `0ea69d0` | Fond gris clair global pour contraster avec les cards blanches |
 
-# Si aucune clé : en générer une
-ssh-keygen -t ed25519 -C "gregoire.maillard@wivoo.fr" -f ~/.ssh/id_ed25519 -N ""
+---
 
-# Afficher la clé publique à copier dans GitHub
-cat ~/.ssh/id_ed25519.pub
-```
-Puis aller sur **github.com → Settings → SSH and GPG keys → New SSH key**.
+## Ce qu'il reste à faire / pistes d'amélioration
 
-### 2. Changer le remote en SSH et pusher
-```bash
-git remote set-url origin git@github.com:GregoireMaillard/wivoo-nos-realisations.git
-git push -u origin main
-```
-
-### 3. Vérifier / déployer sur Vercel
-- Si le projet est déjà connecté sur vercel.com → vérifier que le dernier commit est bien déployé
-- Sinon : **vercel.com → Add New Project → connecter GitHub → `wivoo-nos-realisations` → Deploy**
+- Animations d'entrée des cards au scroll (Intersection Observer)
+- Témoignages clients sur les pages détail
+- Navigation entre cas (précédent / suivant) sur les pages détail
+- Mode sombre
+- SEO : og:image et meta description par cas
+- Back-office : rendre l'édition des cas fonctionnelle (write to JSON)
 
 ---
 
@@ -119,9 +120,11 @@ git push -u origin main
 | Data | Vert émeraude | `#059669` |
 | Design | Rose | `#db2777` |
 
-## Footer
-- Fond : `#160b52`
-- Bannière réseaux : `#3a26b0`
+## Autres couleurs
+- Hero / filtres : `#f0eeff` (violet très clair)
+- Fond page : `#f9fafb` (gray-50)
+- Footer fond : `#160b52`
+- Footer bannière réseaux : `#3a26b0`
 - CTA vert : `#5BDF6A`
 
 ## Stack technique
