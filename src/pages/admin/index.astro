@@ -114,11 +114,12 @@ const flashError = params.get('error'); // 'conflict' | '1' | null
                 <p class="text-xs text-gray-400 mt-0.5">{c.subtitle}</p>
               </div>
               <div class="flex items-center gap-2 flex-shrink-0">
-                <form method="POST">
+                <form method="POST" class="toggle-form" data-slug={c.slug}>
                   <input type="hidden" name="action" value="toggle" />
                   <input type="hidden" name="slug" value={c.slug} />
-                  <button type="submit"
-                          class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors">
+                  <button type="submit" data-toggle-btn
+                          title="Mise à jour du site public en cours (~1 min)"
+                          class="text-xs px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent">
                     {isPub ? '⊘ Dépublier' : '✓ Publier'}
                   </button>
                 </form>
@@ -141,4 +142,64 @@ const flashError = params.get('error'); // 'conflict' | '1' | null
       </div>
     )}
   </main>
+
+  <script>
+    // Après un publier/dépublier, le site public met ~1 min à se régénérer
+    // (rebuild Vercel). On désactive le bouton concerné pendant ce délai pour
+    // éviter les re-clics qui empileraient des commits/redéploiements inutiles.
+    // Le cooldown est stocké dans localStorage afin de survivre au rechargement
+    // de page provoqué par le POST.
+    const COOLDOWN_MS = 60000;
+    const KEY = 'wivoo-admin-toggle-cooldown';
+
+    function getCooldowns() {
+      try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch { return {}; }
+    }
+    function setCooldowns(obj) {
+      localStorage.setItem(KEY, JSON.stringify(obj));
+    }
+
+    // Enregistre le cooldown au moment de la soumission (avant le rechargement).
+    document.querySelectorAll('.toggle-form').forEach((form) => {
+      form.addEventListener('submit', () => {
+        const slug = form.dataset.slug;
+        if (!slug) return;
+        const cd = getCooldowns();
+        cd[slug] = Date.now() + COOLDOWN_MS;
+        setCooldowns(cd);
+      });
+    });
+
+    // Applique l'état (désactivé + compte à rebours) à chaque seconde.
+    function applyCooldowns() {
+      const cd = getCooldowns();
+      const now = Date.now();
+      let changed = false;
+
+      document.querySelectorAll('.toggle-form').forEach((form) => {
+        const slug = form.dataset.slug;
+        const btn = form.querySelector('[data-toggle-btn]');
+        if (!slug || !btn) return;
+
+        const until = cd[slug];
+        if (until && until > now) {
+          const secs = Math.ceil((until - now) / 1000);
+          if (!btn.dataset.original) btn.dataset.original = btn.textContent.trim();
+          btn.disabled = true;
+          btn.textContent = `⏳ Maj du site… ${secs}s`;
+        } else {
+          if (btn.disabled) {
+            btn.disabled = false;
+            if (btn.dataset.original) btn.textContent = btn.dataset.original;
+          }
+          if (until) { delete cd[slug]; changed = true; }
+        }
+      });
+
+      if (changed) setCooldowns(cd);
+    }
+
+    applyCooldowns();
+    setInterval(applyCooldowns, 1000);
+  </script>
 </BaseLayout>
