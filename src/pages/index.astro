@@ -11,17 +11,11 @@ const cases = readCases().filter(c => c.published !== false);
 
 <BaseLayout title="Nos Réalisations — Wivoo">
   <style>
-    .card-description {
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-    }
     .card-overlay {
       opacity: 0;
       transition: opacity 0.3s ease;
     }
     .case-card:hover .card-overlay { opacity: 1; }
-    .case-card:hover .card-description { opacity: 1; transform: translateY(0); }
   </style>
 
   <Navbar />
