@@ -51,6 +51,50 @@ Commercial → /admin (édite) → commit cases.json sur GitHub (API)
 
 ---
 
+## Pourquoi un commit par sauvegarde — et quand en changer
+
+**Décision (03/06/2026)** : chaque sauvegarde dans le back-office génère un commit
+`chore(admin): mise à jour des réalisations` sur `main`. C'est **assumé**, pas un
+défaut.
+
+### Le raisonnement
+
+L'architecture a été dimensionnée sur une hypothèse explicite : **éditions rares
+(quelques fois par mois)**. Sous cette hypothèse, le commit-par-sauvegarde est le
+**meilleur compromis** :
+- pas d'infrastructure supplémentaire (la donnée vit dans le repo, versionnée) ;
+- versioning, historique et rollback du contenu **gratuits** via Git ;
+- modèle 100 % statique conservé (simple, rapide, robuste, sécurisé).
+
+Le coût — quelques dizaines de commits `chore(admin):` par an — est **marginal** et
+n'altère pas la lisibilité de l'historique de code, d'autant que ces commits sont
+préfixés (convention « changement non structurant ») et donc filtrables :
+
+```bash
+# Historique de code uniquement (exclut les commits de contenu back-office)
+git log --invert-grep --grep="chore(admin)" --oneline
+```
+
+> Re-architecturer maintenant pour éviter ces commits serait de la
+> **sur-ingénierie** : on ajouterait de la complexité et du risque pour résoudre un
+> problème cosmétique à cette fréquence.
+
+### Le seuil de bascule
+
+On change d'approche **quand le problème devient réel**, pas par anticipation. Si la
+fréquence d'édition passe durablement à **plusieurs fois par semaine**, deux options
+prennent le relais :
+
+| Option | Principe | Quand la choisir |
+|---|---|---|
+| **A — Branche `content` dédiée** | Les sauvegardes committent sur une branche `content`, pas `main`. Le build source la donnée depuis cette branche. | On veut garder le versioning Git du contenu, fréquence modérée. |
+| **B — Store externe + ISR/SSR** | Le contenu sort de Git (base de données / Vercel KV ou Blob). Les pages lisent le store ; revalidation à la demande (ISR) ou rendu SSR. | Éditions fréquentes, priorité à l'instantanéité ; versioning Git du contenu non requis. |
+
+Tant qu'on reste à « quelques fois par mois », **aucune des deux n'est justifiée** :
+le statu quo est le choix optimal.
+
+---
+
 ## Configuration Vercel (variables d'environnement)
 
 À définir dans : projet Vercel → **Settings** → **Environment Variables**.
