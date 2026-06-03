@@ -2,11 +2,11 @@
 export const prerender = false;
 
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { readCases, writeCases, ConcurrentEditError } from '../../../lib/cases';
+import { readCasesLive, writeCases, ConcurrentEditError } from '../../../lib/cases';
 import type { Case } from '../../../lib/cases';
 
 const { slug } = Astro.params;
-const cases = readCases();
+const cases = await readCasesLive();
 let c = cases.find(x => x.slug === slug);
 
 if (!c) return Astro.redirect('/admin');

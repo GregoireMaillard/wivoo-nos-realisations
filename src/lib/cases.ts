@@ -29,6 +29,39 @@ export function readCases(): Case[] {
 }
 
 /**
+ * Lit les réalisations en privilégiant l'état le plus à jour.
+ * - En local (pas de GITHUB_TOKEN) : lit le fichier (= readCases).
+ * - En production : lit `cases.json` directement depuis GitHub (dernier commit),
+ *   et non le bundle déployé. Évite à l'admin d'afficher l'ancien état pendant
+ *   le ~1 min de redéploiement Vercel. En cas d'échec, retombe sur le bundle.
+ *
+ * À réserver aux pages d'administration. Les pages publiques (statiques)
+ * utilisent readCases() au build.
+ */
+export async function readCasesLive(): Promise<Case[]> {
+  const token  = process.env.GITHUB_TOKEN;
+  const repo   = process.env.GITHUB_REPO;
+  const branch = process.env.GITHUB_BRANCH || 'main';
+
+  if (!token || !repo) return readCases();
+
+  try {
+    const url = `https://api.github.com/repos/${repo}/contents/${GITHUB_FILE_PATH}?ref=${branch}`;
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.raw',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    });
+    if (!res.ok) return readCases();
+    return JSON.parse(await res.text());
+  } catch {
+    return readCases();
+  }
+}
+
+/**
  * Erreur levée quand une écriture concurrente provoque un conflit de SHA
  * non résolu par le retry. Permet à l'UI d'afficher un message dédié.
  */

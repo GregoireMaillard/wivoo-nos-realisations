@@ -2,14 +2,14 @@
 export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { readCases, writeCases, isRemotePersistence, ConcurrentEditError, SECTOR_COLORS } from '../../lib/cases';
+import { readCasesLive, writeCases, isRemotePersistence, ConcurrentEditError, SECTOR_COLORS } from '../../lib/cases';
 
 // Handle POST (delete + toggle)
 if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
   const action = form.get('action') as string;
   const slug   = form.get('slug') as string;
-  const cases  = readCases();
+  const cases  = await readCasesLive();
 
   try {
     if (action === 'delete') {
@@ -25,7 +25,7 @@ if (Astro.request.method === 'POST') {
   }
 }
 
-const cases = readCases();
+const cases = await readCasesLive();
 const remote = isRemotePersistence();
 const params = Astro.url.searchParams;
 const flashSaved = params.get('saved') === '1';

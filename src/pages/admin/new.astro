@@ -2,14 +2,14 @@
 export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { readCases, writeCases, ConcurrentEditError } from '../../lib/cases';
+import { readCasesLive, writeCases, ConcurrentEditError } from '../../lib/cases';
 import type { Case } from '../../lib/cases';
 
 let error = '';
 
 if (Astro.request.method === 'POST') {
   const form = await Astro.request.formData();
-  const cases = readCases();
+  const cases = await readCasesLive();
 
   const slug = (form.get('slug') as string).trim();
   if (cases.find(c => c.slug === slug)) {
