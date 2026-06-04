@@ -14,7 +14,7 @@
 - **valorise les expertises Wivoo** (Product, IA, Data, Design) et **les résultats chiffrés**, pour convertir des prospects B2B vers « Prendre RDV » ;
 - **rend la page autonome** : les commerciaux ajoutent / modifient / publient une réalisation depuis un back-office, **sans toucher au code**, image comprise.
 
-**Là où on en est.** Vitrine + back-office **en ligne et fonctionnels**, déploiement automatique. Une limite assumée (pas encore d'authentification du back-office) et une feuille de route claire pour la suite.
+**Là où on en est.** Vitrine + back-office **en ligne et fonctionnels** (authentification, upload d'image et vidéo YouTube inclus), déploiement automatique, et une feuille de route claire pour la suite.
 
 ---
 
@@ -66,8 +66,8 @@
 - ⚠️ **Aucune analytique branchée à ce jour** — ces indicateurs sont **à instrumenter** (roadmap P3). C'est un prototype : pas de résultats chiffrés à présenter, mais un cadre de mesure prêt à l'emploi.
 
 ### Périmètre MVP & hors-périmètre (discipline produit)
-- **Dans le périmètre** : filtrage, vues grille/liste, pages détail, back-office CRUD + upload + publication.
-- **Hors-périmètre assumé** (pour livrer vite la preuve de valeur) : authentification, optimisation d'image, SEO par cas, analytics, i18n, tests automatisés → tous **priorisés** dans la roadmap.
+- **Dans le périmètre** : filtrage, vues grille/liste, pages détail, vidéo YouTube, back-office CRUD + upload d'image + publication + **authentification**.
+- **Hors-périmètre assumé** (pour livrer vite la preuve de valeur) : optimisation d'image, SEO par cas, analytics, i18n, tests automatisés → tous **priorisés** dans la roadmap.
 - **Logique** : livrer d'abord la valeur démontrable (vitrine qui convertit + autonomie des commerciaux), repousser ce qui ne bloque pas la démonstration.
 
 ### Hypothèses à valider
@@ -161,11 +161,11 @@
 - **Filtres double rangée** — Expertise (Product/AI/Data/Design) et Secteur, combinés en **logique ET**, avec compteur et **état vide** (message + bouton réinitialiser).
 - **Deux vues** — grille (3 colonnes) ou liste.
 - **Cartes** — image, badge expertise coloré, badge secteur, titre, **résultat chiffré mis en avant**, lien « Voir le cas ».
-- **Pages de détail** — hero, 3 KPIs, le défi, la solution, CTA « Prendre RDV ».
+- **Pages de détail** — hero, 3 KPIs, le défi, la solution, **vidéo YouTube** (optionnelle), CTA « Prendre RDV ».
 - **Navbar / Footer** chartés, repris de wivoo.fr.
 
 **Back-office (`/admin`)**
-- Lister, **créer / modifier / supprimer**, **publier / dépublier**, **uploader une image** (composant dédié, 4 Mo, aperçu), avec retours de confirmation et gestion des conflits.
+- **Accès protégé par authentification** (mot de passe + session). Lister, **créer / modifier / supprimer**, **publier / dépublier**, **uploader une image** (composant dédié, 4 Mo, aperçu), **ajouter une vidéo YouTube**, avec retours de confirmation et gestion des conflits.
 
 ---
 
@@ -200,17 +200,16 @@
 | **Lecture « live » dans l'admin** | Le back-office reflète les changements **immédiatement**, sans attendre la régénération |
 | **Déploiement automatique Vercel** | `git push` → mise en ligne, sans intervention manuelle |
 
-**Sécurité (état actuel) :** protection anti-CSRF active sur l'admin ; le jeton GitHub reste **côté serveur** (jamais exposé). ⚠️ Authentification du back-office **non encore en place** — voir limites.
+**Sécurité (état actuel) :** **authentification du back-office** (middleware Astro + mot de passe partagé `ADMIN_PASSWORD` + session signée HMAC, cookie httpOnly/Secure) ; protection anti-CSRF active ; le jeton GitHub reste **côté serveur** (jamais exposé). L'auth s'active dès que `ADMIN_PASSWORD` est définie côté Vercel (sinon `/admin` reste ouvert en local pour le dev).
 
 ---
 
 ## État actuel & limites assumées
 
-**En ligne et fonctionnel :** vitrine complète + back-office opérationnel en production (création, édition, publication, **upload d'image validé de bout en bout**), déploiement automatique.
+**En ligne et fonctionnel :** vitrine complète + back-office opérationnel en production (création, édition, publication, **upload d'image** et **vidéo YouTube** validés de bout en bout, **authentification**), déploiement automatique.
 
 | Limite | Détail | Criticité |
 |---|---|---|
-| **Authentification** | `/admin` ouvert sans login (assumé pour la démo) | 🔴 à traiter avant exposition réelle |
 | **Un commit par sauvegarde** | Acceptable à faible fréquence ; seuil de bascule documenté | 🟡 |
 | **Images orphelines** | Remplacer une image ne supprime pas l'ancienne | 🟡 |
 | **Images non optimisées** | Servies telles quelles (limite 4 Mo) | 🟡 |
@@ -224,7 +223,7 @@
 > Priorisé par **impact × effort** : P1 = ce qui débloque un usage réel, P2 = ce qui sert la conversion, P3 = ce qui fait passer à l'échelle et permet de mesurer.
 
 **Priorité 1 — fiabiliser**
-- Authentification du back-office (mot de passe partagé ou SSO Wivoo).
+- ✅ ~~Authentification du back-office~~ — **fait** (à activer en posant `ADMIN_PASSWORD` dans Vercel). Évolution possible : SSO Wivoo.
 - Suppression de l'ancienne image lors d'un remplacement.
 
 **Priorité 2 — valoriser & convertir**

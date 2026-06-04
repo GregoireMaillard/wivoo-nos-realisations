@@ -3,20 +3,30 @@
 Documentation du fonctionnement et de la configuration du back-office de gestion
 des réalisations (`/admin`).
 
-## ⚠️ TODO sécurité — à traiter avant toute exposition réelle
+## Authentification
 
-**Le back-office `/admin` n'a actuellement AUCUNE authentification.** N'importe qui
-connaissant l'URL peut créer, modifier ou supprimer des réalisations (et donc
-committer sur le repo GitHub).
+Le back-office `/admin` est protégé par un **middleware Astro** (`src/middleware.ts`)
+qui redirige vers `/admin/login` tant que la session n'est pas valide. La logique
+est dans `src/lib/auth.ts`.
 
-C'est un choix assumé pour la phase de démo (URL non communiquée). **Une
-authentification doit être ajoutée avant** :
-- de communiquer le lien `/admin` à des utilisateurs,
-- toute exposition publique / indexation,
-- la mise en production "réelle".
+- **Mot de passe partagé** : variable d'env `ADMIN_PASSWORD`. Sert aussi de clé de
+  signature des sessions (une seule variable à configurer).
+- **Session** : cookie `wivoo_admin_session` signé en HMAC-SHA256 (jamais le mot de
+  passe en clair), `httpOnly`, `SameSite=Lax`, `Secure` en prod, valable 7 jours.
+  Comparaisons à temps constant.
+- **Pages** : `/admin/login` (connexion), `/admin/logout` (déconnexion). Lien
+  « Déconnexion » dans l'en-tête de l'admin.
 
-Piste prévue : middleware Astro (`src/middleware.ts`) protégeant `/admin*` avec
-un mot de passe partagé (variable d'env `ADMIN_PASSWORD`) + cookie de session.
+### ⚠️ Activation
+L'auth n'est **active que si `ADMIN_PASSWORD` est définie** :
+- **Production (Vercel)** : définir `ADMIN_PASSWORD` → `/admin` exige le mot de passe.
+- **Local (`npm run dev`)** : variable absente → `/admin` reste ouvert (confort de dev).
+
+> Tant que `ADMIN_PASSWORD` n'est pas configurée côté Vercel, `/admin` reste **ouvert
+> en production**. C'est l'unique action restante pour verrouiller le back-office.
+
+Évolution possible : SSO Wivoo / comptes individuels (le partagé suffit pour quelques
+commerciaux).
 
 ---
 
@@ -104,6 +114,7 @@ le statu quo est le choix optimal.
 | `GITHUB_TOKEN` | *(le PAT fine-grained)* | Authentifie les commits sur le repo |
 | `GITHUB_REPO` | `GregoireMaillard/wivoo-nos-realisations` | Repo cible `owner/repo` |
 | `GITHUB_BRANCH` | `main` | Branche cible des commits |
+| `ADMIN_PASSWORD` | *(mot de passe partagé)* | Active et protège l'accès à `/admin` (cf. Authentification) |
 
 Sans ces variables, toute sauvegarde en production échouera (message d'erreur
 affiché dans l'admin).

@@ -46,11 +46,23 @@ et servies à `/case-images/<slug>-xxxx.ext`.
 - **Testé de bout en bout** en local ET en prod (commit atomique validé, cas de test nettoyé).
 - `writeCases()` (API Contents) reste utilisé pour publier/dépublier/supprimer (sans image).
 
-**Variables d'env Vercel** : `GITHUB_TOKEN`, `GITHUB_REPO`
-(`GregoireMaillard/wivoo-nos-realisations`), `GITHUB_BRANCH` (`main`).
+**Vidéo YouTube (ajout 04/06/2026)** : champ optionnel `videoUrl` sur le type `Case`.
+Composant `src/components/YouTubeEmbed.astro` (iframe responsive 16:9, youtube-nocookie
++ lazy, rend rien si invalide). Helper `youtubeId()` (`cases.ts`) gère watch/youtu.be/
+embed/shorts/ID brut. Section « Découvrir en vidéo » entre la solution et le CTA sur
+`case-studies/[slug].astro`, affichée seulement si une vidéo est renseignée. Champ
+« Lien vidéo YouTube (optionnel) » dans `new.astro` + `edit/[slug].astro`. Testé.
 
-⚠️ **Pas encore d'authentification sur `/admin`** (assumé pour la démo) — à sécuriser
-avant toute exposition réelle. Cf. `docs/back-office.md`.
+**Authentification `/admin` (ajout 04/06/2026)** : middleware `src/middleware.ts` +
+logique `src/lib/auth.ts`. Protège `/admin*` → redirige vers `/admin/login` si session
+invalide. Mot de passe partagé `ADMIN_PASSWORD` (= clé de signature). Session = cookie
+`wivoo_admin_session` signé HMAC-SHA256, httpOnly/SameSite/Secure, 7 j. Comparaisons à
+temps constant. Pages `login.astro` / `logout.astro` + lien Déconnexion dans l'admin.
+**Active uniquement si `ADMIN_PASSWORD` est défini** (prod protégé / local ouvert). Testé
+de bout en bout. **Action restante : poser `ADMIN_PASSWORD` dans Vercel (Production).**
+
+**Variables d'env Vercel** : `GITHUB_TOKEN`, `GITHUB_REPO`
+(`GregoireMaillard/wivoo-nos-realisations`), `GITHUB_BRANCH` (`main`), `ADMIN_PASSWORD`.
 
 ### Documentation (ajout fin de session)
 - `docs/documentation-projet.md` — **doc de présentation/pitch** : contexte, avant/après,
@@ -203,7 +215,7 @@ PrototypeChallengeShowcase_V3/
 - Navigation entre cas (précédent / suivant) sur les pages détail
 - Mode sombre
 - SEO : og:image et meta description par cas
-- **Back-office : authentification** (actuellement `/admin` est OUVERT — à sécuriser avant toute exposition réelle, cf. `docs/back-office.md`) — **priorité 1**
+- ✅ **Back-office : authentification — FAIT** (middleware + mot de passe). Reste à **activer** en posant `ADMIN_PASSWORD` dans Vercel. Cf. `docs/back-office.md`.
 - **Images orphelines** : remplacer une image en édition ne supprime pas l'ancienne de `public/case-images/` (à nettoyer côté `writeCasesWithImage`)
 - Optimisation des images à l'upload (redimensionnement / compression)
 - Back-office phase 2 : encart d'aide permanent dans l'admin (reporté à la demande)
