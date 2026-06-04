@@ -79,6 +79,7 @@ cases.forEach(c => {
     #grid.list-view .card-img img { transform: none !important; }
     #grid.list-view .case-card:hover .card-img img { transform: none !important; }
     #grid.list-view .p-4 { padding: 0; display: contents; }
+    #grid.list-view .card-titleblock { flex: unset; margin-bottom: 0; }
     #grid.list-view .card-title { -webkit-line-clamp: 3; flex: unset; margin-bottom: 0; }
     #grid.list-view .border-gray-100 { display: none; }
     #grid.list-view .kpi-group { display: flex; flex-direction: column; gap: 3px; justify-content: center; }
@@ -192,7 +193,12 @@ cases.forEach(c => {
             </div>
             <!-- Content -->
             <div class="p-4 flex flex-col flex-1">
-              <h2 class="card-title text-base font-bold text-gray-900 leading-snug flex-1 mb-2">{c.title}</h2>
+              <div class="card-titleblock flex-1 mb-2">
+                {c.client && (
+                  <p class="text-xs font-bold uppercase tracking-wide mb-1" style={`color:${SECTOR_COLORS[c.sector].hex};`}>{c.client}</p>
+                )}
+                <h2 class="card-title text-base font-bold text-gray-900 leading-snug">{c.title}</h2>
+              </div>
               <hr class="border-gray-100 mb-2" />
               <div class="kpi-group">
                 <p class="text-2xl font-extrabold leading-none mb-1" style={`color:${SECTOR_COLORS[c.sector].hex};`}>
