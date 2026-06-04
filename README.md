@@ -1,43 +1,33 @@
-# Astro Starter Kit: Minimal
+# Wivoo — « Nos Réalisations »
+
+Prototype de refonte de la section cas clients de [wivoo.fr](https://www.wivoo.fr/our-case-studies) :
+une **vitrine orientée conversion** (filtres par expertise/secteur, vues grille/liste, pages
+détail avec résultats chiffrés et vidéo) doublée d'un **back-office** permettant aux équipes
+d'ajouter, éditer et publier des réalisations — image et vidéo comprises — **sans toucher au code**.
+
+**En ligne :** https://wivoo-nos-realisations.vercel.app/
+
+## Stack
+
+- [Astro](https://astro.build) — site public **statique** + back-office **SSR**
+- [Tailwind CSS v4](https://tailwindcss.com)
+- Déploiement **Vercel** (automatique à chaque push sur `main`)
+- Données versionnées dans `src/data/cases.json` ; persistance back-office via l'API GitHub
+
+## Développement
 
 ```sh
-npm create astro@latest -- --template minimal
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # build de production
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Documentation (`docs/`)
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
-
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
-
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
-
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
-
-Any static assets, like images, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+| Fichier | Contenu |
+| --- | --- |
+| `documentation-projet.md` | Présentation : contexte, choix UX/techniques, schémas d'architecture, roadmap |
+| `back-office.md` | Exploitation : variables d'environnement, token GitHub, authentification |
+| `script-demo.md` | Script de prise de parole pour la démo |
+| `reprise-session.md` | Journal de reprise de session |
+| `archive/` | Documents obsolètes conservés pour l'historique (ex. plan de la v1) |

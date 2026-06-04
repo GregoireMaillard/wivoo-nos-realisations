@@ -1,3 +1,7 @@
+> ⚠️ **ARCHIVE — plan de la v1 (prototype HTML statique).** Obsolète depuis la
+> migration vers Astro + back-office. Conservé pour l'historique. Pour l'état
+> actuel du projet, voir `docs/documentation-projet.md`.
+
 # Plan — Prototype "Nos Réalisations" Wivoo
 
 ## Contexte

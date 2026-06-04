@@ -1,1 +1,10 @@
+# Dépendances
+node_modules
+
+# Build & caches (régénérés automatiquement)
+dist
+.astro
 .vercel
+
+# OS
+.DS_Store
