@@ -1,10 +1,21 @@
 # Reprise de session — Prototype Wivoo "Nos Réalisations"
 
-## État du projet au 03/06/2026
+## État du projet au 04/06/2026
 
 ### Migration V2 → V3
 Le projet a migré de HTML statique vers **Astro 6.4.1** + **Tailwind CSS v4** + adaptateur **@astrojs/vercel**.
 Un back-office d'administration a été ajouté.
+
+### Session du 04/06/2026 — récap
+- **Vidéo YouTube** sur la page de détail (composant `YouTubeEmbed.astro`, champ `videoUrl` au back-office) — cf. section dédiée plus bas.
+- **Authentification `/admin`** (middleware + mot de passe `ADMIN_PASSWORD` + session signée) — cf. section dédiée. ⚠️ **À activer** en posant `ADMIN_PASSWORD` dans Vercel.
+- **Client affiché en eyebrow** (sur-titre) sur la carte et la page de détail, uniquement si renseigné. Couleur expertise sur la carte, blanc sur le hero. Regroupé dans `.card-titleblock` pour préserver la vue liste.
+- **Toast de succès prod simplifié** : « ✓ Enregistré. La modification sera effective dans quelques instants. »
+- **Nettoyage projet** : junk/caches supprimés et **gitignorés** (`node_modules`, `dist`, `.astro`, `.DS_Store`, `.vercel`) ; `docs/plan.md` (plan v1 HTML obsolète) archivé → `docs/archive/plan-v1.md` ; README boilerplate remplacé par un README projet réel. Rollback : tag `pre-cleanup-20260604`.
+
+### ⚠️ Règles de workflow (inscrites dans CLAUDE.md)
+- **Ne jamais commit/push avant validation locale de l'utilisateur** (push = déploiement Vercel). Flux : implémenter → l'utilisateur teste sur `localhost:4321` → il valide → push sur sa demande.
+- Les éditions locales de `src/data/cases.json` (via le back-office) sont des **tests** → ne jamais les commit/push, sauf contenu réel signalé explicitement.
 
 ### Back-office — persistance + UX (ajout 03/06/2026)
 Le back-office persiste désormais en production. Détails dans `docs/back-office.md`
@@ -82,21 +93,25 @@ de bout en bout. **Action restante : poser `ADMIN_PASSWORD` dans Vercel (Product
 - `src/pages/index.astro` — page principale avec filtres double rangée sticky, toggle grille/liste, hero violet, fond gris
 - `src/pages/case-studies/[slug].astro` — pages détail avec bouton retour, breadcrumb, KPIs bordés, défi, solution, CTA
 - `src/pages/admin/index.astro` — liste des études de cas (back-office)
-- `src/pages/admin/new.astro` — formulaire de création d'une nouvelle étude de cas
-- `src/pages/admin/edit/[slug].astro` — formulaire d'édition d'une étude de cas
+- `src/pages/admin/new.astro` — formulaire de création (image + vidéo)
+- `src/pages/admin/edit/[slug].astro` — formulaire d'édition (image + vidéo)
+- `src/pages/admin/login.astro` / `logout.astro` — connexion / déconnexion du back-office
+- `src/middleware.ts` — protège `/admin*` (auth)
+- `src/lib/auth.ts` — logique d'authentification (mot de passe + session signée)
 - `src/components/Navbar.astro` — navbar sticky z-50 avec dropdowns au hover (liens wivoo.fr réels)
 - `src/components/Footer.astro`
 - `src/components/ImageUpload.astro` — composant d'upload d'image (aperçu, validation 4 Mo)
+- `src/components/YouTubeEmbed.astro` — intégration vidéo YouTube responsive
 - `src/layouts/BaseLayout.astro` — favicon Wivoo, fond gris global
 - `src/data/cases.json` — source de vérité (9 réalisations)
-- `src/lib/cases.ts` — helpers données + persistance (Contents API, Git Data API) + upload
+- `src/lib/cases.ts` — helpers données + persistance (Contents API, Git Data API) + upload + youtubeId
 - `public/case-images/` — images uploadées via le back-office
 - `src/styles/global.css`
-- `CLAUDE.md` — règles, contexte projet et persona UX expert (à jour)
+- `CLAUDE.md` — règles (dont workflow), contexte projet et persona UX expert (à jour)
 - `docs/documentation-projet.md` — doc de présentation/pitch (UX + Product + technique)
 - `docs/script-demo.md` — script de prise de parole (~2 min 30)
 - `docs/back-office.md` — note d'exploitation
-- `docs/plan.md` — plan d'implémentation
+- `docs/archive/plan-v1.md` — plan de la v1 HTML (archivé, obsolète)
 
 ### Structure des fichiers
 ```
