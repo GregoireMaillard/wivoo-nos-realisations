@@ -1,12 +1,12 @@
-# « Nos Réalisations » Wivoo — Présentation du prototype
+# « Nos Réalisations » Wivoo — Documentation du projet
 
 > **En une phrase** — Une refonte de la page « cas clients » de wivoo.fr qui transforme une simple galerie d'images en **vitrine orientée conversion**, doublée d'un **back-office autonome** permettant aux commerciaux d'alimenter la page sans développeur.
 
-**🔗 Démo :** https://wivoo-nos-realisations.vercel.app/ · **Back-office :** …/admin
+**🔗 En ligne :** https://wivoo-nos-realisations.vercel.app/ · **Back-office :** …/admin
 
 ---
 
-## En bref (pour décideur — 30 s)
+## En bref
 
 **Le problème.** La page actuelle de wivoo.fr aligne 8 cas clients (image + titre), sans filtre, sans résultat visible, sans détail. Elle informe, mais ne **convertit** pas et n'est pas **maintenable** par les équipes métier.
 
@@ -28,14 +28,6 @@
 | Détail d'un cas | — | **Page dédiée** (résultats, défi, solution, CTA) |
 | Vues | Une seule | **Grille ou liste** au choix |
 | Mise à jour du contenu | Par un développeur | **Par les commerciaux**, en autonomie |
-
----
-
-## Fil conducteur de démo suggéré
-
-1. **Le site public** — montrer le filtrage par expertise (couleurs Wivoo) puis par secteur, basculer grille/liste, ouvrir une page de cas (résultats → défi → solution → CTA).
-2. **Le back-office** — créer une réalisation, **uploader une image** (sans manipuler d'URL), publier ; montrer qu'elle apparaît sur le site.
-3. **Le propos** — ce prototype sert deux objectifs : *convertir* (côté vitrine) et *rendre l'équipe autonome* (côté back-office).
 
 ---
 
@@ -63,12 +55,12 @@
 - **North star** : taux de conversion vers « Prendre RDV » depuis la section réalisations.
 - **Côté vitrine** : clic carte → détail, usage des filtres, clic CTA, profondeur de scroll, rebond.
 - **Côté back-office (efficacité opérationnelle)** : délai « mission terminée → cas publié », nombre de cas publiés / mois, **part de publications faites sans développeur** (cible : 100 %).
-- ⚠️ **Aucune analytique branchée à ce jour** — ces indicateurs sont **à instrumenter** (roadmap P3). C'est un prototype : pas de résultats chiffrés à présenter, mais un cadre de mesure prêt à l'emploi.
+- ⚠️ **Aucune analytique branchée à ce jour** — ces indicateurs sont **à instrumenter** (roadmap P3). C'est un prototype : pas de résultats chiffrés à ce stade, mais un cadre de mesure prêt à l'emploi.
 
 ### Périmètre MVP & hors-périmètre (discipline produit)
 - **Dans le périmètre** : filtrage, vues grille/liste, pages détail, vidéo YouTube, back-office CRUD + upload d'image + publication + **authentification**.
 - **Hors-périmètre assumé** (pour livrer vite la preuve de valeur) : optimisation d'image, SEO par cas, analytics, i18n, tests automatisés → tous **priorisés** dans la roadmap.
-- **Logique** : livrer d'abord la valeur démontrable (vitrine qui convertit + autonomie des commerciaux), repousser ce qui ne bloque pas la démonstration.
+- **Logique** : livrer d'abord la valeur concrète (vitrine qui convertit + autonomie des commerciaux), repousser ce qui n'est pas essentiel à ce stade.
 
 ### Hypothèses à valider
 - **H1 — valeur visiteur** : exposer expertises + résultats chiffrés + filtres augmente la conversion vers RDV → à valider par analytics / A/B test.
