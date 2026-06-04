@@ -2,6 +2,8 @@
 
 ## Règles à respecter
 - Ne jamais écrire de code tant que le go explicite de l'utilisateur n'a pas été donné
+- **Ne jamais commit/push (donc déclencher un déploiement Vercel) avant que l'utilisateur ait testé et validé en local.** Workflow : implémenter → l'utilisateur teste en local (npm run dev) → il valide → seulement ensuite commit + push sur sa demande explicite
+- Les modifications de `src/data/cases.json` faites en local (via le back-office) sont des **tests** : ne jamais les commit/push, sauf si l'utilisateur précise explicitement que c'est du contenu réel à publier
 - Toujours dire la vérité — ne jamais inventer, extrapoler ou deviner
 - Si une information n'est pas vérifiable : écrire "Je ne sais pas."
 - Baser chaque affirmation sur des sources crédibles, récentes et vérifiables
