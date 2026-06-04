@@ -230,6 +230,107 @@
 
 ---
 
+## Méthode — orchestration multi-agents
+
+> *Comment l'audit ci-dessous a été produit.* Un **agent principal** (orchestrateur) découpe la demande, **dispatche** le travail à **3 sous-agents spécialisés** qui s'exécutent **en parallèle** et **en lecture seule** (ils ne modifient jamais le code), puis l'agent principal **consolide** leurs rapports en une synthèse priorisée.
+
+```
+                  ┌────────────────────────────────────────────┐
+                  │   UTILISATEUR                                │
+                  │   « audite le site et conseille-moi »        │
+                  └────────────────────────┬───────────────────-┘
+                                           │  demande
+                                           ▼
+                  ┌────────────────────────────────────────────┐
+                  │   AGENT PRINCIPAL  (orchestrateur)           │
+                  │   • découpe la demande en tâches             │
+                  │   • dispatche les 3 experts EN PARALLÈLE     │
+                  │   • consolide ensuite les retours            │
+                  └──────┬─────────────┬─────────────┬──────────┘
+         (1) dispatch    │             │             │
+                         ▼             ▼             ▼
+          ┌────────────────────┐ ┌───────────┐ ┌────────────────────┐
+          │  SOUS-AGENT UX/UI  │ │ TECH LEAD │ │   QA MANAGER       │
+          │  ergonomie · a11y  │ │ archi ·   │ │   bugs ·           │
+          │  design system     │ │ sécurité  │ │   régressions      │
+          └─────────┬──────────┘ └─────┬─────┘ └─────────┬──────────┘
+                    │  lecture seule    │  lecture seule  │  lecture seule
+                    ▼                   ▼                 ▼
+          ┌──────────────────────────────────────────────────────────┐
+          │   CODE + SITE  (src/, cases.json, /admin)  — NON modifié   │
+          └──────────────────────────────────────────────────────────┘
+                    │                   │                 │
+                    └────── (2) un rapport d'expert chacun ───────────┘
+                                           ▼
+                  ┌────────────────────────────────────────────┐
+                  │   AGENT PRINCIPAL                            │
+                  │   (3) SYNTHÈSE CONSOLIDÉE PRIORISÉE          │
+                  │       (recoupe les constats, classe P0/P1/P2)│
+                  └────────────────────────┬───────────────────-┘
+                                           ▼
+                                 UTILISATEUR  /  cette doc
+```
+
+**Pourquoi c'est utile (lecture rapide pour décideur) :**
+
+| Atout | Bénéfice concret |
+|---|---|
+| **Parallélisation** | 3 expertises traitées en même temps → audit complet en quelques minutes |
+| **Spécialisation** | Chaque sous-agent a un persona expert dédié (UX, Tech, QA) → analyse plus profonde qu'un généraliste |
+| **Lecture seule / isolation** | Les sous-agents n'écrivent jamais dans le code → **zéro risque** pour le développement en cours (on peut auditer pendant qu'on code) |
+| **Consolidation** | L'agent principal recoupe les retours (un même problème vu par 2 experts = priorité haute) et produit **un seul plan d'action priorisé** |
+| **Réutilisable** | Les 3 experts sont enregistrés (`.claude/agents/`) → relançables à la demande sur n'importe quelle page |
+
+> *Note de transparence : ces agents conseillent et signalent — ils ne corrigent pas le code eux-mêmes. La mise en œuvre des recommandations reste une décision humaine.*
+
+---
+
+## Audit qualité consolidé (UX · Tech · QA)
+
+> *Synthèse du 2026-06-04, croisant trois revues internes : UX/UI, Tech Lead, QA. Priorisé par **impact × effort**.*
+> **Notes globales :** UX/UI **7/10** · Santé technique **7,5/10**.
+> ⚠️ **Limite de méthode :** les revues UX et QA n'ont **pas pu tester le site en conditions réelles** (accès réseau bloqué dans l'environnement d'audit). Les constats marqués **[runtime ?]** sont des hypothèses fondées sur le code, **à confirmer en navigateur** (relancer le QA avec Playwright / accès `localhost`). Les autres sont constatés dans le code/les données.
+
+### P0 — Sécurité & robustesse (avant tout usage élargi)
+
+| # | Constat | Où | Reco | Vu par |
+|---|---|---|---|---|
+| S1 | **Upload SVG autorisé → XSS stocké** (un SVG peut contenir du `<script>` exécuté en same-origin → vol de session admin) | `src/lib/cases.ts:166` | Retirer `svg` des formats acceptés | Tech |
+| S2 | **`/admin` totalement ouvert si `ADMIN_PASSWORD` absent en prod** | `src/lib/auth.ts:12`, `src/middleware.ts:7` | Garde-fou : refuser l'accès admin en prod SSR si la variable manque (plutôt que d'ouvrir) | Tech, QA |
+| S3 | **Aucune validation serveur** des entrées (`slug`, `sector` casté sans contrôle, longueurs) → données malformées committées, build cassable | `admin/new.astro:26-44`, `admin/edit/[slug].astro:39-57` | Valider côté serveur : slug `^[a-z0-9-]+$`, `sector` ∈ union, longueurs max | Tech |
+| S4 | **Accès non gardé `kpis[0]`** → un cas publié sans KPI casse le build de la home | `index.astro:172` | `c.kpis[0]?.value` + fallback, ou KPI obligatoire à la création | Tech |
+| S5 | **Login sans rate-limiting** (bruteforce en ligne possible) | `src/lib/auth.ts`, `admin/login.astro` | Cooldown/limitation par IP sur le POST login | Tech |
+
+### P1 — Conversion & bugs visibles (quick wins, fort impact)
+
+| # | Constat | Où | Reco | Vu par |
+|---|---|---|---|---|
+| U1 | **Aucun CTA de conversion sur la home** (seul « Prendre RDV » dans la navbar) → plus gros trou de conversion | `index.astro` | Bande CTA en bas de grille (réutiliser le bloc `#5BDF6A` de `case-studies/[slug].astro:104`) | UX |
+| D1 | **Cas #9 en Lorem ipsum, publié** (`published: true`) — visible publiquement | `src/data/cases.json` id 9 | Dépublier ou corriger avant toute démo | UX, QA |
+| D2 | **Cas #9 « Funecap » : `subtitle` sans `—`** → industrie vide → invisible sous tout filtre Secteur | `cases.json` id 9, `index.astro:171` | Corriger le sous-titre, ou champ `industry` dédié | QA |
+| D3 | **KPI `"+"` orphelin** affiché en gros sur la page détail | `cases.json` (cas chatbot banque) | Saisir une valeur ou retirer ce KPI | UX, QA |
+| U2 | **Barre de filtres « Secteur » déborde** (`flex-nowrap` + `shrink-0`, pas de wrap) **[runtime ?]** | `index.astro:126` | Passer en `flex-wrap` (comme la ligne « Expertise ») | UX, QA |
+| U3 | **Conflit de positionnement sticky** navbar (`top-0`, ~96px) / filtres (`top-24`) → chevauchement/écart possible **[runtime ?]** | `Navbar.astro:53`, `index.astro:104` | Lier les hauteurs (variable CSS) et réduire le logo (voir U4) | UX, QA |
+| U4 | **Logo navbar surdimensionné** (`h-16` = 64px ; incohérent avec l'admin `h-10`) | `Navbar.astro:57` | Réduire à `h-10` (libère l'above-the-fold, fiabilise U3) | UX |
+
+### P2 — Accessibilité, contenu & dette technique
+
+| # | Constat | Où | Reco | Vu par |
+|---|---|---|---|---|
+| A1 | **Filtres non accessibles** : état actif par la couleur seule (pas d'`aria-pressed`), pas de focus clavier visible (WCAG 1.4.1 / 2.4.7) | `index.astro:111-139` | `aria-pressed` synchronisé + `focus-visible:ring` | UX |
+| A2 | **Contrastes texte secondaire** limites/insuffisants (`text-gray-500` sur `#f0eeff`, footer `white/40`) **[runtime ?]** | `index.astro:97,207`, `Footer.astro:35` | Remonter à `gray-600` / `white/60` min | UX |
+| A3 | **`alt="Hero"` non descriptif** sur la page détail | `case-studies/[slug].astro:27` | `alt=""` (décoratif) ou alt réel | UX |
+| C1 | **Champ `description` saisi (obligatoire) mais jamais affiché** dans les templates publics | formulaires admin / `index.astro` | L'afficher (au survol, comme annoncé) ou le retirer du formulaire | UX, QA |
+| C2 | **Forte duplication** `new.astro` / `edit/[slug].astro` (~120 lignes + logique de mapping) | les deux fichiers | Extraire `CaseForm.astro` + `parseCaseFromForm()` | Tech |
+| C3 | **Images non optimisées** (pas d'`astro:assets`, pas de `srcset`/format moderne) | `index.astro:180`, `[slug].astro:27` | Migrer les images locales vers `astro:assets` | Tech, UX |
+| C4 | Détails : `package.json name: "y"`, zones tactiles filtres < 44px, vue liste non responsive **[runtime ?]**, `focus:ring-blue-500` hors charte | divers | Cosmétique / accessibilité fine | Tech, UX |
+
+### À confirmer en test live (non couvert par l'audit)
+
+Statuts HTTP, erreurs console JS, liens externes/images (CDN Webflow → 404 possibles), responsive réel, comportement du double sticky, lecture vidéo. **Pour les obtenir : relancer le QA avec accès réseau `localhost` autorisé, ou exécuter `npx playwright` manuellement.**
+
+---
+
 ## Annexe — stack & infos
 
 - **Astro 6.4** · **Tailwind v4** · **Vercel** · **Node ≥ 22.12**
