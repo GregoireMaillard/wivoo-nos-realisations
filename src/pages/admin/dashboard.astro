@@ -3,12 +3,13 @@ export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { readCases, SECTOR_COLORS } from '../../lib/cases';
-import { analyticsEnabled, mget, KEY_VIEWS, KEY_CLICKS_TOTAL, keyCaseClicks } from '../../lib/analytics';
+import { analyticsEnabled, mget, pfcount, KEY_VIEWS, KEY_VISITORS, KEY_CLICKS_TOTAL, keyCaseClicks } from '../../lib/analytics';
 
 const cases = readCases();
 const enabled = analyticsEnabled();
 
 let views = 0;
+let uniques = 0;
 let clicksTotal = 0;
 let perCase: { slug: string; title: string; sector: string; clicks: number }[] = [];
 
@@ -17,6 +18,7 @@ if (enabled) {
   const vals = await mget(keys);
   views = Number(vals[0]) || 0;
   clicksTotal = Number(vals[1]) || 0;
+  uniques = await pfcount(KEY_VISITORS);
   perCase = cases
     .map((c, i) => ({ slug: c.slug, title: c.title, sector: c.sector, clicks: Number(vals[i + 2]) || 0 }))
     .sort((a, b) => b.clicks - a.clicks);
@@ -48,10 +50,14 @@ const hasData = views > 0 || clicksTotal > 0;
     ) : (
       <>
         <!-- Cartes de stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div class="bg-white rounded-2xl border border-gray-200 p-6">
             <p class="text-3xl font-extrabold text-gray-900">{views.toLocaleString('fr-FR')}</p>
-            <p class="text-sm text-gray-500 mt-1">Visites de la page Réalisations</p>
+            <p class="text-sm text-gray-500 mt-1">Visites <span class="text-gray-400">(vues totales)</span></p>
+          </div>
+          <div class="bg-white rounded-2xl border border-gray-200 p-6">
+            <p class="text-3xl font-extrabold text-gray-900">{uniques.toLocaleString('fr-FR')}</p>
+            <p class="text-sm text-gray-500 mt-1">Visiteurs uniques <span class="text-gray-400">(estimé)</span></p>
           </div>
           <div class="bg-white rounded-2xl border border-gray-200 p-6">
             <p class="text-3xl font-extrabold text-gray-900">{clicksTotal.toLocaleString('fr-FR')}</p>

@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { incr, analyticsEnabled, KEY_VIEWS, KEY_CLICKS_TOTAL, keyCaseClicks } from '../../lib/analytics';
+import { incr, pfadd, visitorHash, analyticsEnabled, KEY_VIEWS, KEY_VISITORS, KEY_CLICKS_TOTAL, keyCaseClicks } from '../../lib/analytics';
 import { readCases } from '../../lib/cases';
 
 // Endpoint de tracking (cookieless, agrégé). Toujours 204 — fire-and-forget,
@@ -18,6 +18,11 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (body.type === 'view') {
     await incr(KEY_VIEWS);
+    // Visiteur unique (cookieless) : empreinte IP+UA via HyperLogLog. IP non stockée.
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+            || request.headers.get('x-real-ip') || '';
+    const ua = request.headers.get('user-agent') || '';
+    await pfadd(KEY_VISITORS, visitorHash(ip, ua));
   } else if (body.type === 'click') {
     const slug = String(body.slug || '').toLowerCase();
     // Slug validé (format + appartenance aux cas connus) pour éviter toute injection de clé.

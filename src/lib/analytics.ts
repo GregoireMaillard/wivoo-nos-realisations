@@ -8,9 +8,22 @@
  *   UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN   (nommage Upstash)
  */
 
+import crypto from 'node:crypto';
+
 export const KEY_VIEWS = 'wivoo:views:list';
+export const KEY_VISITORS = 'wivoo:visitors'; // HyperLogLog des visiteurs uniques
 export const KEY_CLICKS_TOTAL = 'wivoo:clicks:total';
 export const keyCaseClicks = (slug: string) => `wivoo:clicks:case:${slug}`;
+
+const VISITOR_SALT = 'wivoo-analytics-v1';
+
+/**
+ * Empreinte cookieless d'un visiteur : hash(IP + User-Agent + sel).
+ * L'IP n'est jamais stockée — l'empreinte alimente un HyperLogLog (irréversible).
+ */
+export function visitorHash(ip: string, ua: string): string {
+  return crypto.createHash('sha256').update(`${ip}|${ua}|${VISITOR_SALT}`).digest('hex');
+}
 
 function config(): { url: string; token: string } {
   // process.env : variables runtime (Vercel prod). import.meta.env : fallback pour
@@ -54,4 +67,14 @@ export async function mget(keys: string[]): Promise<(string | null)[]> {
   if (!keys.length) return [];
   const result = await redis(['MGET', ...keys]);
   return Array.isArray(result) ? (result as (string | null)[]) : keys.map(() => null);
+}
+
+/** Ajoute une empreinte au HyperLogLog (compteur de cardinalité approximatif). */
+export async function pfadd(key: string, value: string): Promise<void> {
+  await redis(['PFADD', key, value]);
+}
+
+/** Cardinalité estimée du HyperLogLog (≈ visiteurs uniques). */
+export async function pfcount(key: string): Promise<number> {
+  return Number(await redis(['PFCOUNT', key])) || 0;
 }
