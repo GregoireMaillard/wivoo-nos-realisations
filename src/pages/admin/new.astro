@@ -40,6 +40,8 @@ if (Astro.request.method === 'POST') {
         challenge: (form.get('challenge') as string).trim(),
         solution: (form.get('solution') as string).split('\n').map(s => s.trim()).filter(Boolean),
       };
+      const videoUrl = (form.get('videoUrl') as string || '').trim();
+      if (videoUrl) newCase.videoUrl = videoUrl;
       cases.push(newCase);
       try {
         await writeCasesWithImage(cases, image);
@@ -104,6 +106,11 @@ if (Astro.request.method === 'POST') {
           <textarea name="description" required rows="2" placeholder="Résumé en 1-2 phrases affiché sur la carte au survol" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"></textarea>
         </div>
         <ImageUpload required={true} />
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">Lien vidéo YouTube (optionnel)</label>
+          <input name="videoUrl" type="url" placeholder="https://www.youtube.com/watch?v=…" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <p class="text-xs text-gray-400 mt-1">Affichée sur la page de détail. Collez le lien YouTube (watch, youtu.be, embed ou shorts).</p>
+        </div>
         <div class="flex items-center gap-3">
           <input name="published" type="checkbox" checked id="pub" class="w-4 h-4 rounded" />
           <label for="pub" class="text-sm text-gray-600">Publié (visible sur le site vitrine)</label>

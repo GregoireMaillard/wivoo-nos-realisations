@@ -1,0 +1,33 @@
+---
+/**
+ * Intègre une vidéo YouTube de façon responsive (16:9).
+ * - youtube-nocookie.com (respect de la vie privée) + chargement différé.
+ * - Ne rend RIEN si l'URL est absente ou non reconnue.
+ *
+ * Props :
+ *   url   — URL YouTube (ou ID brut)
+ *   title — titre accessible de l'iframe
+ */
+import { youtubeId } from '../lib/cases';
+
+interface Props {
+  url?: string;
+  title?: string;
+}
+const { url = '', title = 'Vidéo' } = Astro.props;
+const id = youtubeId(url);
+---
+
+{id && (
+  <div class="relative w-full overflow-hidden rounded-2xl shadow-sm" style="aspect-ratio: 16 / 9;">
+    <iframe
+      class="absolute inset-0 w-full h-full"
+      src={`https://www.youtube-nocookie.com/embed/${id}`}
+      title={title}
+      loading="lazy"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>
+  </div>
+)}

@@ -2,7 +2,8 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Navbar from '../../components/Navbar.astro';
 import Footer from '../../components/Footer.astro';
-import { readCases, SECTOR_COLORS } from '../../lib/cases';
+import YouTubeEmbed from '../../components/YouTubeEmbed.astro';
+import { readCases, SECTOR_COLORS, youtubeId } from '../../lib/cases';
 import type { Case } from '../../lib/cases';
 
 export const prerender = true;
@@ -15,6 +16,7 @@ export async function getStaticPaths() {
 interface Props { c: Case; }
 const { c } = Astro.props;
 const col = SECTOR_COLORS[c.sector];
+const videoId = youtubeId(c.videoUrl);
 ---
 
 <BaseLayout title={`${c.title} — Wivoo`}>
@@ -84,6 +86,16 @@ const col = SECTOR_COLORS[c.sector];
       ))}
     </ul>
   </section>
+
+  {videoId && (
+    <Fragment>
+      <div class="max-w-4xl mx-auto px-6"><hr class="border-gray-100" /></div>
+      <section class="max-w-4xl mx-auto px-6 py-10">
+        <h2 class="text-xl font-bold text-gray-900 mb-6">Découvrir en vidéo</h2>
+        <YouTubeEmbed url={c.videoUrl} title={c.title} />
+      </section>
+    </Fragment>
+  )}
 
   <!-- CTA -->
   <section class="max-w-4xl mx-auto px-6 py-12 text-center">

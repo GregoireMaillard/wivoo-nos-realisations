@@ -19,6 +19,7 @@ export interface Case {
   kpis: Kpi[];
   challenge: string;
   solution: string[];
+  videoUrl?: string; // lien YouTube optionnel affiché sur la page de détail
 }
 
 const DATA_PATH = join(process.cwd(), 'src/data/cases.json');
@@ -283,6 +284,29 @@ async function commitFilesToGitHub(jsonContent: string, image: NewImage | null):
     throw new Error(`Mise à jour de la branche échouée (HTTP ${updateRes.status}). ${detail}`);
   }
   throw new ConcurrentEditError();
+}
+
+// ─── Vidéo YouTube ───────────────────────────────────────────────────────────
+
+/**
+ * Extrait l'identifiant d'une vidéo YouTube depuis une URL (formats watch,
+ * youtu.be, embed, shorts) ou un ID brut. Retourne null si rien d'exploitable.
+ */
+export function youtubeId(url?: string): string | null {
+  if (!url) return null;
+  const u = url.trim();
+  const patterns = [
+    /(?:youtube\.com\/watch\?(?:.*&)?v=)([\w-]{11})/,
+    /(?:youtu\.be\/)([\w-]{11})/,
+    /(?:youtube(?:-nocookie)?\.com\/embed\/)([\w-]{11})/,
+    /(?:youtube\.com\/shorts\/)([\w-]{11})/,
+  ];
+  for (const p of patterns) {
+    const m = u.match(p);
+    if (m) return m[1];
+  }
+  if (/^[\w-]{11}$/.test(u)) return u; // ID brut collé
+  return null;
 }
 
 export const SECTOR_COLORS: Record<string, { hex: string; bg: string }> = {
