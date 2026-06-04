@@ -1,0 +1,50 @@
+---
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { authEnabled, passwordMatches, createToken, SESSION_COOKIE, COOKIE_MAX_AGE } from '../../lib/auth';
+
+// Auth désactivée (local) → pas de login nécessaire.
+if (!authEnabled()) return Astro.redirect('/admin');
+
+let error = '';
+if (Astro.request.method === 'POST') {
+  const form = await Astro.request.formData();
+  const password = (form.get('password') as string) || '';
+  if (passwordMatches(password)) {
+    Astro.cookies.set(SESSION_COOKIE, createToken(), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: import.meta.env.PROD,
+      path: '/',
+      maxAge: COOKIE_MAX_AGE,
+    });
+    return Astro.redirect('/admin');
+  }
+  error = 'Mot de passe incorrect.';
+}
+---
+
+<BaseLayout title="Connexion — Back-office Wivoo">
+  <main class="min-h-screen flex items-center justify-center px-6">
+    <div class="w-full max-w-sm bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+      <img src="https://cdn.prod.website-files.com/64f8703aba9a3b126e920e3a/6867e403657af2e53b357217_LOGO-Wivoo-RGB_BLUE.svg"
+           alt="Wivoo" class="h-10 mb-6" />
+      <h1 class="text-lg font-bold text-gray-900 mb-1">Back-office Réalisations</h1>
+      <p class="text-sm text-gray-500 mb-6">Accès réservé — saisissez le mot de passe.</p>
+
+      {error && (
+        <div class="mb-4 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-2.5 rounded-lg">{error}</div>
+      )}
+
+      <form method="POST" class="space-y-4">
+        <input type="password" name="password" required autofocus placeholder="Mot de passe"
+               class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <button type="submit"
+                class="w-full bg-gray-900 text-white font-semibold text-sm px-5 py-2.5 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">
+          Se connecter
+        </button>
+      </form>
+    </div>
+  </main>
+</BaseLayout>
